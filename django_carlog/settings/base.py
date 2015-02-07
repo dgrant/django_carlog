@@ -10,7 +10,12 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+#BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+
+from os.path import join, abspath, dirname
+here = lambda *x: join(abspath(dirname(__file__)), *x)
+PROJECT_ROOT = here("..", "..")
+root = lambda *x: join(abspath(PROJECT_ROOT), *x)
 
 
 # Quick-start development settings - unsuitable for production
@@ -83,6 +88,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = root('static')
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
