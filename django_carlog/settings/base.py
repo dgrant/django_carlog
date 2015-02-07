@@ -50,7 +50,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'carlog.urls'
+ROOT_URLCONF = 'django_carlog.urls'
 
 WSGI_APPLICATION = 'carlog.wsgi.application'
 
