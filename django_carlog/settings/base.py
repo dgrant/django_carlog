@@ -57,7 +57,7 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'django_carlog.urls'
 
-WSGI_APPLICATION = 'carlog.wsgi.application'
+WSGI_APPLICATION = 'django_carlog.wsgi.application'
 
 
 # Database
@@ -92,8 +92,8 @@ STATIC_ROOT = root('static')
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        #'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-        'rest_framework.permissions.IsAdminUser'
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+        #'rest_framework.permissions.IsAdminUser'
     ],
     'PAGINATE_BY': 10,
 
