@@ -5,3 +5,4 @@ django_carlog/settings/production.py
 /static/admin
 /static/rest_framework
 /backups
+*.log
