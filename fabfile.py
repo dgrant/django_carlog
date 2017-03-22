@@ -26,7 +26,8 @@ def backupdb():
 
 def static():
     with cd(ROOT):
-        run('env/bin/python ./manage.py collectstatic --settings=django_carlog.settings.production --noinput --link --clear')
+        run('rm -rf static/*')
+        run('env/bin/python ./manage.py collectstatic --settings=django_carlog.settings.production --noinput --link')
 
 def deploy():
     execute(update)
