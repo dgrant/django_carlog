@@ -17,6 +17,9 @@ class Trip(TimeStampedModel):
     def __str__(self):
         return "{0} to {1} for {2} ({3} km)".format(self.date, self.destination, self.reason, self.distance)
 
+    class Meta:
+        ordering = ['-date',]
+
 class Odometer(TimeStampedModel):
     date = models.DateField()
     car = models.ForeignKey(Car)
