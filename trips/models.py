@@ -7,6 +7,9 @@ class Car(TimeStampedModel):
     def __str__(self):
         return "{0}".format(self.name,)
 
+    class Meta:
+        ordering = ['name',]
+
 class Trip(TimeStampedModel):
     date = models.DateField()
     destination = models.CharField(max_length=20)
@@ -28,3 +31,5 @@ class Odometer(TimeStampedModel):
     def __str__(self):
         return "{0} {1} km ({2})".format(self.date, self.km, self.car)
 
+    class Meta:
+        ordering = ['-date',]
