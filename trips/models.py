@@ -15,7 +15,7 @@ class Trip(TimeStampedModel):
     destination = models.CharField(max_length=20)
     reason = models.CharField(max_length=20)
     distance = models.DecimalField(max_digits=5, decimal_places=1)
-    car = models.ForeignKey(Car)
+    car = models.ForeignKey(Car, on_delete=models.CASCADE)
 
     def __str__(self):
         return "{0} to {1} for {2} ({3} km)".format(self.date, self.destination, self.reason, self.distance)
@@ -25,7 +25,7 @@ class Trip(TimeStampedModel):
 
 class Odometer(TimeStampedModel):
     date = models.DateField()
-    car = models.ForeignKey(Car)
+    car = models.ForeignKey(Car, on_delete=models.CASCADE)
     km = models.IntegerField()
 
     def __str__(self):
