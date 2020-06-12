@@ -6,3 +6,4 @@ django_carlog/settings/production.py
 /static/rest_framework
 /backups
 *.log
+.idea/
