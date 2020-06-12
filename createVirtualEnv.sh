@@ -1,5 +1,6 @@
 #!/bin/sh
 
 rm -rf env
-virtualenv -p python3 --distribute --no-site-packages env
+python3 -m venv env
+env/bin/pip install --upgrade pip
 env/bin/pip install -r requirements.txt
