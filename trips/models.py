@@ -1,14 +1,18 @@
 from django.db import models
 from model_utils.models import TimeStampedModel
 
+
 class Car(TimeStampedModel):
     name = models.CharField(max_length=20, unique=True)
 
     def __str__(self):
-        return "{0}".format(self.name,)
+        return f"{self.name}"
 
     class Meta:
-        ordering = ['name',]
+        ordering = [
+            "name",
+        ]
+
 
 class Trip(TimeStampedModel):
     date = models.DateField()
@@ -18,10 +22,15 @@ class Trip(TimeStampedModel):
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
 
     def __str__(self):
-        return "{0} to {1} for {2} ({3} km)".format(self.date, self.destination, self.reason, self.distance)
+        return "{} to {} for {} ({} km)".format(
+            self.date, self.destination, self.reason, self.distance
+        )
 
     class Meta:
-        ordering = ['-date',]
+        ordering = [
+            "-date",
+        ]
+
 
 class Odometer(TimeStampedModel):
     date = models.DateField()
@@ -29,7 +38,9 @@ class Odometer(TimeStampedModel):
     km = models.IntegerField()
 
     def __str__(self):
-        return "{0} {1} km ({2})".format(self.date, self.km, self.car)
+        return f"{self.date} {self.km} km ({self.car})"
 
     class Meta:
-        ordering = ['-date',]
+        ordering = [
+            "-date",
+        ]
