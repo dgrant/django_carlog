@@ -6,21 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('trips', '0001_squashed_0007_auto_20170321_2241'),
+        ("trips", "0001_squashed_0007_auto_20170321_2241"),
     ]
 
     operations = [
-        migrations.AlterModelOptions(
-            name='car',
-            options={'ordering': ['name']},
-        ),
-        migrations.AlterModelOptions(
-            name='odometer',
-            options={'ordering': ['-date']},
-        ),
+        migrations.AlterModelOptions(name="car", options={"ordering": ["name"]},),
+        migrations.AlterModelOptions(name="odometer", options={"ordering": ["-date"]},),
         migrations.AlterField(
-            model_name='odometer',
-            name='km',
-            field=models.IntegerField(),
+            model_name="odometer", name="km", field=models.IntegerField(),
         ),
     ]

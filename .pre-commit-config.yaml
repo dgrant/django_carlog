@@ -1,0 +1,77 @@
+fail_fast: false
+repos:
+- repo: git://github.com/psf/black
+  rev: 19.10b0
+  hooks:
+  - id: black
+- repo: git://github.com/pre-commit/pre-commit-hooks
+  rev: v2.5.0
+  hooks:
+  - id: check-added-large-files
+  - id: check-executables-have-shebangs
+  - id: check-json
+  - id: check-merge-conflict
+  - id: check-symlinks
+  - id: check-yaml
+  - id: debug-statements
+  - id: end-of-file-fixer
+  - id: forbid-new-submodules
+  - id: pretty-format-json
+    args: ['--indent', '2', '--no-sort-keys']
+  - id: name-tests-test
+    args: ['--django']
+  - id: trailing-whitespace
+- repo: https://github.com/PyCQA/prospector
+  rev: 1.2.0
+  hooks:
+  - id: prospector
+    language: system
+    exclude: >
+            (?x)^(
+                docs/conf.py|
+                trips/migrations/.*|
+                fabfile.py
+            )$
+    args: ['-X']
+- repo: https://github.com/pre-commit/mirrors-csslint.git
+  rev: v1.0.5
+  hooks:
+  - id: csslint
+- repo: https://github.com/asottile/pyupgrade
+  rev: v2.1.0
+  hooks:
+  - id: pyupgrade
+    args: ['--py36-plus']
+- repo: https://github.com/asottile/seed-isort-config
+  rev: v2.1.0
+  hooks:
+  - id: seed-isort-config
+- repo: https://github.com/pre-commit/mirrors-isort
+  rev: v4.3.21
+  hooks:
+  - id: isort
+    args: ['--multi-line', '3', '--trailing-comma']
+- repo: git://github.com/awebdeveloper/pre-commit-tslint/
+  rev: master
+  hooks:
+  - id: tslint
+    additional_dependencies: ['tslint@5.20.1', 'typescript', 'tslint-eslint-rules', 'tslint-config-prettier', 'tslint-plugin-prettier']
+    args: ['--project', './react-cms/tsconfig.json', '--config', './react-cms/tslint.json', '--fix']
+    files: \.[jt]sx?$  # *.js, *.jsx, *.ts and *.tsx
+    types: [file]
+
+- repo: https://github.com/pre-commit/mirrors-eslint
+  rev: master
+  hooks:
+  - id: eslint
+    additional_dependencies:
+    - typescript
+    - eslint@6.7.1
+    - eslint-plugin-import@2.18.2
+    - eslint-plugin-react@7.17.0
+    - eslint-plugin-react-hooks@2.3.0
+    - "@typescript-eslint/eslint-plugin@2.23.0"
+    - "@typescript-eslint/parser@2.23.0"
+    args: ['--config', './react-cms/eslintrc.json', '--fix']
+    files: \.[jt]sx?$  # *.js, *.jsx, *.ts and *.tsx
+    types: [file]
