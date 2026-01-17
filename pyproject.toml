@@ -198,7 +198,6 @@ ignore = [
 "**/settings/*.py" = ["F405", "F403"]
 
 # Scripts and tools
-"fabfile.py" = ["T201", "INP001", "ANN", "D"]
 "manage.py" = ["INP001"]
 
 # Migrations - auto-generated, minimal linting
