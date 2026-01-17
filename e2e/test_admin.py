@@ -76,7 +76,7 @@ class TestAdminInterface:
         page.fill("input[name='password']", "adminpassword123")
         page.click("input[type='submit']")
 
-        # Navigate to trips
-        page.click("text=Trips")
+        # Navigate to trips - use the specific model link
+        page.click("a[href='/admin/trips/trip/']")
         expect(page).to_have_url(f"{live_server.url}/admin/trips/trip/")
         expect(page.locator("text=Select trip to change")).to_be_visible()

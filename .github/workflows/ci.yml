@@ -107,6 +107,8 @@ jobs:
         run: uv run playwright install --with-deps chromium
 
       - name: Run E2E tests
+        env:
+          DJANGO_ALLOW_ASYNC_UNSAFE: "true"
         run: |
           uv run pytest e2e/ --browser chromium
 

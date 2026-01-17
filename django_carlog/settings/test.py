@@ -1,7 +1,13 @@
+import os
+
 from .base import *
 
 
 DEBUG = True
+
+# Allow Django to run synchronous database operations in async contexts
+# This is needed for pytest-playwright E2E tests
+os.environ.setdefault("DJANGO_ALLOW_ASYNC_UNSAFE", "true")
 
 # Secret key for testing only
 SECRET_KEY = "test-secret-key-not-for-production-use-only-in-tests"
