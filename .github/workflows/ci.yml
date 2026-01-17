@@ -25,7 +25,7 @@ jobs:
         run: uv python install ${{ env.PYTHON_VERSION }}
 
       - name: Install dependencies
-        run: uv sync --dev
+        run: uv sync --all-extras
 
       - name: Run Ruff linter
         run: uv run ruff check .
@@ -70,7 +70,7 @@ jobs:
           sudo apt-get install -y default-libmysqlclient-dev build-essential pkg-config
 
       - name: Install Python dependencies
-        run: uv sync --dev
+        run: uv sync --all-extras
 
       - name: Run unit tests with coverage
         env:
@@ -101,7 +101,7 @@ jobs:
         run: uv python install ${{ env.PYTHON_VERSION }}
 
       - name: Install Python dependencies
-        run: uv sync --dev
+        run: uv sync --all-extras
 
       - name: Install Playwright browsers
         run: uv run playwright install --with-deps chromium
