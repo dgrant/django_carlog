@@ -267,6 +267,8 @@ django_settings_module = "django_carlog.settings.base"
 DJANGO_SETTINGS_MODULE = "django_carlog.settings.test"
 python_files = ["test_*.py", "*_test.py"]
 addopts = "-v --tb=short"
+# Disable pytest-base-url URL verification to avoid scope mismatch with Django's live_server
+base_url = ""
 
 [tool.coverage.run]
 source = ["trips"]
