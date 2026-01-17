@@ -19,9 +19,7 @@ def update():
 
 
 def schema():
-    with cd(ROOT), shell_env(
-        DJANGO_SETTINGS_MODULE="django_carlog.settings.production"
-    ):
+    with cd(ROOT), shell_env(DJANGO_SETTINGS_MODULE="django_carlog.settings.production"):
         run("env/bin/python ./manage.py migrate")
 
 
@@ -33,9 +31,7 @@ def backupdb():
 def static():
     with cd(ROOT):
         run("rm -rf static/*")
-        run(
-            "env/bin/python ./manage.py collectstatic --settings=django_carlog.settings.production --noinput --link"
-        )
+        run("env/bin/python ./manage.py collectstatic --settings=django_carlog.settings.production --noinput --link")
 
 
 def deploy():

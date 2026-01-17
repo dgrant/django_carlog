@@ -2,6 +2,9 @@ from .base import *  # noqa: F401, F403
 
 DEBUG = True
 
+# Secret key for testing only
+SECRET_KEY = "test-secret-key-not-for-production-use-only-in-tests"
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -20,3 +23,6 @@ PASSWORD_HASHERS = [
 
 # Disable email verification for tests
 ACCOUNT_EMAIL_VERIFICATION = "none"
+
+# Root URL conf for tests
+ROOT_URLCONF = "django_carlog.urls"

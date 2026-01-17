@@ -8,6 +8,9 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
         fields = ("url", "username", "email", "is_staff")
+        extra_kwargs = {
+            "url": {"view_name": "trips:user-detail"},
+        }
 
 
 class CarSerializer(serializers.HyperlinkedModelSerializer):
@@ -17,6 +20,9 @@ class CarSerializer(serializers.HyperlinkedModelSerializer):
             "url",
             "name",
         )
+        extra_kwargs = {
+            "url": {"view_name": "trips:car-detail"},
+        }
 
 
 class TripSerializer(serializers.HyperlinkedModelSerializer):
@@ -30,6 +36,10 @@ class TripSerializer(serializers.HyperlinkedModelSerializer):
             "distance",
             "car",
         )
+        extra_kwargs = {
+            "url": {"view_name": "trips:trip-detail"},
+            "car": {"view_name": "trips:car-detail"},
+        }
 
 
 class OdometerSerializer(serializers.HyperlinkedModelSerializer):
@@ -41,3 +51,7 @@ class OdometerSerializer(serializers.HyperlinkedModelSerializer):
             "car",
             "km",
         )
+        extra_kwargs = {
+            "url": {"view_name": "trips:odometer-detail"},
+            "car": {"view_name": "trips:car-detail"},
+        }

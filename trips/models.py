@@ -22,9 +22,7 @@ class Trip(TimeStampedModel):
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
 
     def __str__(self):
-        return "{} to {} for {} ({} km)".format(
-            self.date, self.destination, self.reason, self.distance
-        )
+        return f"{self.date} to {self.destination} for {self.reason} ({self.distance} km)"
 
     class Meta:
         ordering = [

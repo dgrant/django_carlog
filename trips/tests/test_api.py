@@ -1,12 +1,12 @@
 """Unit tests for trips API endpoints."""
 
-import pytest
 from decimal import Decimal
-from django.urls import reverse
+
+import pytest
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from trips.models import Car, Trip, Odometer
+from trips.models import Car, Odometer, Trip
 
 
 @pytest.fixture

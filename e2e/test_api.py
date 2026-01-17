@@ -2,11 +2,12 @@
 E2E tests for the REST API endpoints.
 """
 
-import pytest
-from playwright.sync_api import Page, expect, APIRequestContext
 from decimal import Decimal
 
-from trips.models import Car, Trip, Odometer
+import pytest
+from playwright.sync_api import Page, expect
+
+from trips.models import Car, Odometer, Trip
 
 
 @pytest.fixture

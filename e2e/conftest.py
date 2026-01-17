@@ -3,7 +3,6 @@ Playwright E2E test configuration.
 """
 
 import pytest
-from playwright.sync_api import Page
 
 
 @pytest.fixture(scope="session")

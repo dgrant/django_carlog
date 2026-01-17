@@ -1,10 +1,12 @@
 """Unit tests for trips models."""
 
-import pytest
 from decimal import Decimal
+
+import pytest
+from django.db import IntegrityError
 from django.utils import timezone
 
-from trips.models import Car, Trip, Odometer
+from trips.models import Car, Odometer, Trip
 
 
 @pytest.mark.django_db
@@ -25,7 +27,7 @@ class TestCarModel:
     def test_car_unique_name(self):
         """Test that car names must be unique."""
         Car.objects.create(name="Toyota Camry")
-        with pytest.raises(Exception):
+        with pytest.raises(IntegrityError):
             Car.objects.create(name="Toyota Camry")
 
     def test_car_ordering(self):

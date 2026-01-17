@@ -4,7 +4,6 @@ from decimal import Decimal
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.db.models import Sum
-from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView,
@@ -24,7 +23,6 @@ from trips.serializers import (
     TripSerializer,
     UserSerializer,
 )
-
 
 # =============================================================================
 # REST API ViewSets
@@ -81,13 +79,9 @@ class DashboardView(TemplateView):
 
         context["current_year"] = current_year
         context["trips_this_year"] = year_trips.count()
-        context["total_distance_year"] = (
-            year_trips.aggregate(total=Sum("distance"))["total"] or Decimal("0")
-        )
+        context["total_distance_year"] = year_trips.aggregate(total=Sum("distance"))["total"] or Decimal("0")
         context["medical_trips_year"] = medical_trips.count()
-        context["medical_distance_year"] = (
-            medical_trips.aggregate(total=Sum("distance"))["total"] or Decimal("0")
-        )
+        context["medical_distance_year"] = medical_trips.aggregate(total=Sum("distance"))["total"] or Decimal("0")
         context["recent_trips"] = Trip.objects.all()[:10]
 
         return context
@@ -121,13 +115,9 @@ class TripListView(ListView):
         context = super().get_context_data(**kwargs)
 
         # Get filter options
-        context["years"] = (
-            Trip.objects.dates("date", "year").values_list("date__year", flat=True).distinct()
-        )
+        context["years"] = Trip.objects.dates("date", "year").values_list("date__year", flat=True).distinct()
         context["cars"] = Car.objects.all()
-        context["reasons"] = (
-            Trip.objects.values_list("reason", flat=True).distinct().order_by("reason")
-        )
+        context["reasons"] = Trip.objects.values_list("reason", flat=True).distinct().order_by("reason")
 
         # Selected filters
         context["selected_year"] = self.request.GET.get("year", "")
@@ -135,9 +125,7 @@ class TripListView(ListView):
         context["selected_reason"] = self.request.GET.get("reason", "")
 
         # Calculate total distance for filtered results
-        context["total_distance"] = (
-            self.get_queryset().aggregate(total=Sum("distance"))["total"] or Decimal("0")
-        )
+        context["total_distance"] = self.get_queryset().aggregate(total=Sum("distance"))["total"] or Decimal("0")
 
         return context
 
@@ -161,15 +149,9 @@ class TripCreateView(CreateView):
 
         # Common destinations and reasons for autocomplete
         context["common_destinations"] = (
-            Trip.objects.values_list("destination", flat=True)
-            .distinct()
-            .order_by("destination")[:20]
+            Trip.objects.values_list("destination", flat=True).distinct().order_by("destination")[:20]
         )
-        context["common_reasons"] = (
-            Trip.objects.values_list("reason", flat=True)
-            .distinct()
-            .order_by("reason")[:20]
-        )
+        context["common_reasons"] = Trip.objects.values_list("reason", flat=True).distinct().order_by("reason")[:20]
 
         # Default car (most recently used)
         last_trip = Trip.objects.order_by("-date", "-created").first()
@@ -205,15 +187,9 @@ class TripUpdateView(UpdateView):
         context = super().get_context_data(**kwargs)
         context["cars"] = Car.objects.all()
         context["common_destinations"] = (
-            Trip.objects.values_list("destination", flat=True)
-            .distinct()
-            .order_by("destination")[:20]
+            Trip.objects.values_list("destination", flat=True).distinct().order_by("destination")[:20]
         )
-        context["common_reasons"] = (
-            Trip.objects.values_list("reason", flat=True)
-            .distinct()
-            .order_by("reason")[:20]
-        )
+        context["common_reasons"] = Trip.objects.values_list("reason", flat=True).distinct().order_by("reason")[:20]
         return context
 
     def form_valid(self, form):
@@ -250,11 +226,7 @@ class CRAReportView(TemplateView):
         context = super().get_context_data(**kwargs)
 
         # Get available years
-        years = list(
-            Trip.objects.dates("date", "year")
-            .values_list("date__year", flat=True)
-            .distinct()
-        )
+        years = list(Trip.objects.dates("date", "year").values_list("date__year", flat=True).distinct())
         if not years:
             years = [date.today().year]
 
@@ -270,7 +242,7 @@ class CRAReportView(TemplateView):
 
         # Get all trips for the year (for total km calculation)
         all_trips = Trip.objects.filter(date__year=selected_year).select_related("car")
-        
+
         # Get medical/business trips
         medical_trips = all_trips.filter(reason__icontains="medical").order_by("date")
         context["medical_trips"] = medical_trips
@@ -294,19 +266,31 @@ class CRAReportView(TemplateView):
         # Monthly breakdown
         monthly_data = []
         month_names = [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
         ]
         for month in range(1, 13):
             month_trips = medical_trips.filter(date__month=month)
             if month_trips.exists():
                 month_total = month_trips.aggregate(total=Sum("distance"))["total"] or Decimal("0")
-                monthly_data.append({
-                    "month": month,
-                    "month_name": month_names[month - 1],
-                    "trip_count": month_trips.count(),
-                    "total_distance": month_total,
-                })
+                monthly_data.append(
+                    {
+                        "month": month,
+                        "month_name": month_names[month - 1],
+                        "trip_count": month_trips.count(),
+                        "total_distance": month_total,
+                    }
+                )
         context["monthly_data"] = monthly_data
 
         # CRA rate and estimated deduction
@@ -333,7 +317,7 @@ class CRAReportView(TemplateView):
                 .order_by("date")
                 .first()
             )
-            
+
             # Calculate total km driven for the year
             total_km_driven = None
             if start_reading and end_reading:
@@ -350,15 +334,17 @@ class CRAReportView(TemplateView):
             if total_km_driven and total_km_driven > 0:
                 business_percentage = (float(car_medical_km) / total_km_driven) * 100
 
-            car_odometer_data.append({
-                "car": car,
-                "start_reading": start_reading,
-                "end_reading": end_reading,
-                "total_km_driven": total_km_driven,
-                "logged_km": car_logged_km,
-                "medical_km": car_medical_km,
-                "business_percentage": business_percentage,
-            })
+            car_odometer_data.append(
+                {
+                    "car": car,
+                    "start_reading": start_reading,
+                    "end_reading": end_reading,
+                    "total_km_driven": total_km_driven,
+                    "logged_km": car_logged_km,
+                    "medical_km": car_medical_km,
+                    "business_percentage": business_percentage,
+                }
+            )
         context["car_odometer_data"] = car_odometer_data
 
         return context
