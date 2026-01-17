@@ -12,12 +12,17 @@ SECRET_KEY = os.environ["SECRET_KEY"]
 DEBUG = False
 
 # Allowed hosts from environment
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
+_allowed_hosts_env = os.environ.get("ALLOWED_HOSTS", "")
+ALLOWED_HOSTS = [h.strip() for h in _allowed_hosts_env.split(",") if h.strip()]
 
 # Add Render's default domain pattern
 RENDER_EXTERNAL_HOSTNAME = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
+# Fallback: allow common Render domain patterns if no hosts configured
+if not ALLOWED_HOSTS:
+    ALLOWED_HOSTS = [".onrender.com"]
 
 # CSRF trusted origins for HTTPS
 CSRF_TRUSTED_ORIGINS = [f"https://{host}" for host in ALLOWED_HOSTS if host]
