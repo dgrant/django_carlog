@@ -15,6 +15,7 @@ dependencies = [
     "PyJWT",
     "cryptography",
     "gunicorn",
+    "whitenoise",
 ]
 
 [project.optional-dependencies]

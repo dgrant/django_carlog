@@ -1,0 +1,39 @@
+# render.yaml - Render Blueprint for Django CarLog
+# https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: django-carlog
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    envVars:
+      # Django settings
+      - key: DJANGO_SETTINGS_MODULE
+        value: django_carlog.settings.production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        sync: false
+      # External MySQL database (configure in Render dashboard)
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: "3306"
+      - key: DB_NAME
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      # Google OAuth (optional)
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+    healthCheckPath: /trips/api/
+    buildCommand: |
+      uv sync --frozen --no-dev && \
+      uv run python manage.py collectstatic --noinput --settings=django_carlog.settings.production
+    startCommand: uv run gunicorn --bind 0.0.0.0:$PORT django_carlog.wsgi:application
+    autoDeploy: true

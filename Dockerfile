@@ -27,11 +27,8 @@ RUN uv sync --frozen --no-dev
 # Copy project
 COPY . .
 
-# Collect static files
-RUN uv run python manage.py collectstatic --noinput --settings=django_carlog.settings.base || true
-
-# Expose port
+# Expose port (Render uses $PORT env var)
 EXPOSE 8000
 
-# Run gunicorn
+# Default command - can be overridden by Render
 CMD ["uv", "run", "gunicorn", "--bind", "0.0.0.0:8000", "django_carlog.wsgi:application"]
