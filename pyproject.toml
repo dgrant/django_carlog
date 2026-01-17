@@ -6,6 +6,8 @@ requires-python = ">=3.12"
 dependencies = [
     "Django",
     "mysqlclient",
+    "psycopg2-binary",
+    "dj-database-url",
     "django-extensions",
     "django-model-utils",
     "django-environ",
