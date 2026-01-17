@@ -58,8 +58,8 @@ pre-commit run --all-files
 # Black formatter (automatically formats code)
 black .
 
-# isort (automatically sorts imports)
-isort . --multi-line 3 --trailing-comma
+# isort (automatically sorts imports - configuration in .isort.cfg)
+isort .
 
 # Prospector (static analysis - pylint, pyflakes, mccabe, etc.)
 prospector -X
@@ -111,8 +111,11 @@ This project enforces strict code quality standards:
 
 ### Formatting
 - **Black**: Code formatter with default configuration (line length 88)
-- **isort**: Import sorting with settings: `--multi-line 3 --trailing-comma`
-- Configuration in `.isort.cfg`
+- **isort**: Import sorting configured in `.isort.cfg` with:
+  - `multi_line_output=3` (vertical hanging indent)
+  - `include_trailing_comma=True`
+  - `line_length=88` (matching Black)
+  - `use_parentheses=True`
 
 ### Linting
 - **Prospector**: Comprehensive static analysis tool that includes:
@@ -137,7 +140,7 @@ All commits must pass pre-commit hooks (`.pre-commit-config.yaml`):
 
 ### Python Style Conventions
 - Use f-strings for string formatting (enforced by pyupgrade)
-- Python 3.6+ syntax (pyupgrade configured with `--py36-plus`)
+- pyupgrade (Python 3.6+ syntax with `--py36-plus` argument)
 - Follow PEP 8 conventions
 - Use model_utils.models.TimeStampedModel for models with timestamps
 - Models should have `__str__()` methods
@@ -207,5 +210,5 @@ All commits must pass pre-commit hooks (`.pre-commit-config.yaml`):
 
 - The project uses django-debug-toolbar for development debugging
 - MySQL is the database backend (not SQLite)
-- Pre-commit hooks include linting configurations for TypeScript/React (TSLint/ESLint) but the React frontend is not currently in this repository
+- Legacy React frontend configurations remain in pre-commit hooks (referencing ./react-cms/) but the React code is not in this repository
 - Uses django-extensions for enhanced management commands
