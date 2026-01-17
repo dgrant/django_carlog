@@ -20,9 +20,15 @@ RENDER_EXTERNAL_HOSTNAME = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
-# Fallback: allow common Render domain patterns if no hosts configured
-if not ALLOWED_HOSTS:
-    ALLOWED_HOSTS = [".onrender.com"]
+# Always allow Render domain patterns (wildcard and explicit)
+# This ensures the app works even if RENDER_EXTERNAL_HOSTNAME isn't set
+ALLOWED_HOSTS.extend([
+    ".onrender.com",  # Wildcard for all Render subdomains
+    "django-carlog.onrender.com",  # Explicit hostname
+])
+
+# Remove duplicates while preserving order
+ALLOWED_HOSTS = list(dict.fromkeys(ALLOWED_HOSTS))
 
 # CSRF trusted origins for HTTPS
 CSRF_TRUSTED_ORIGINS = [f"https://{host}" for host in ALLOWED_HOSTS if host]
