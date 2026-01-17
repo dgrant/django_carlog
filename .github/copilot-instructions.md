@@ -58,7 +58,8 @@ pre-commit run --all-files
 # Black formatter (automatically formats code)
 black .
 
-# isort (automatically sorts imports - configuration in .isort.cfg)
+# isort (automatically sorts imports)
+# Uses configuration from .isort.cfg
 isort .
 
 # Prospector (static analysis - pylint, pyflakes, mccabe, etc.)
@@ -210,5 +211,5 @@ All commits must pass pre-commit hooks (`.pre-commit-config.yaml`):
 
 - The project uses django-debug-toolbar for development debugging
 - MySQL is the database backend (not SQLite)
-- Legacy React frontend configurations remain in pre-commit hooks (referencing ./react-cms/) but the React code is not in this repository
+- Pre-commit hooks reference a React frontend (./react-cms/) that is not currently in this repository
 - Uses django-extensions for enhanced management commands
