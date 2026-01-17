@@ -4,7 +4,6 @@ __pycache__/
 /venv
 /.venv
 django_carlog.pid
-django_carlog/settings/production.py
 django_carlog/settings/local.py
 /static/admin
 /static/rest_framework
