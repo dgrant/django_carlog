@@ -12,6 +12,7 @@ from django.views.generic import (
     TemplateView,
     UpdateView,
 )
+
 from django_filters import rest_framework as filters
 from rest_framework import viewsets
 
@@ -23,6 +24,7 @@ from trips.serializers import (
     TripSerializer,
     UserSerializer,
 )
+
 
 # =============================================================================
 # REST API ViewSets
@@ -50,7 +52,6 @@ class TripFilter(filters.FilterSet):
 class TripViewSet(viewsets.ModelViewSet):
     queryset = Trip.objects.all()
     serializer_class = TripSerializer
-    # filterset_fields = ["car", "date"]
     filterset_class = TripFilter
 
 
@@ -186,6 +187,9 @@ class TripUpdateView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["cars"] = Car.objects.all()
+        context["today"] = date.today().isoformat()
+        context["prefill_destination"] = ""
+        context["prefill_reason"] = ""
         context["common_destinations"] = (
             Trip.objects.values_list("destination", flat=True).distinct().order_by("destination")[:20]
         )

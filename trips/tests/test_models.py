@@ -2,9 +2,10 @@
 
 from decimal import Decimal
 
-import pytest
 from django.db import IntegrityError
 from django.utils import timezone
+
+import pytest
 
 from trips.models import Car, Odometer, Trip
 

@@ -4,31 +4,31 @@ version = "2.0.0"
 description = "Car trip tracking REST API"
 requires-python = ">=3.12"
 dependencies = [
-    "Django==5.1.5",
-    "mysqlclient==2.2.6",
-    "django-extensions==3.2.3",
-    "django-model-utils==5.0.0",
-    "django-environ==0.11.2",
-    "djangorestframework==3.15.2",
-    "django-filter==24.3",
-    "django-allauth==65.3.0",
-    "PyJWT==2.10.1",
-    "cryptography==44.0.0",
-    "gunicorn==23.0.0",
+    "Django>=5.1",
+    "mysqlclient>=2.2",
+    "django-extensions>=3.2",
+    "django-model-utils>=5.0",
+    "django-environ>=0.11",
+    "djangorestframework>=3.15",
+    "django-filter>=24.0",
+    "django-allauth>=65.0",
+    "PyJWT>=2.10",
+    "cryptography>=44.0",
+    "gunicorn>=23.0",
 ]
 
 [project.optional-dependencies]
 dev = [
-    "ipython==8.31.0",
-    "django-debug-toolbar==4.4.6",
-    "pytest==8.3.4",
-    "pytest-django==4.9.0",
-    "pytest-cov==6.0.0",
-    "pytest-playwright==0.6.2",
-    "ruff==0.8.6",
-    "mypy==1.14.1",
-    "django-stubs==5.1.1",
-    "pre-commit==4.0.1",
+    "ipython>=8.0",
+    "django-debug-toolbar>=4.0",
+    "pytest>=8.0",
+    "pytest-django>=4.9",
+    "pytest-cov>=6.0",
+    "pytest-playwright>=0.6",
+    "ruff>=0.8",
+    "mypy>=1.14",
+    "django-stubs>=5.1",
+    "pre-commit>=4.0",
 ]
 
 [tool.ruff]
@@ -46,21 +46,210 @@ exclude = [
 
 [tool.ruff.lint]
 select = [
+    # Core Python
     "E",      # pycodestyle errors
     "W",      # pycodestyle warnings
-    "F",      # Pyflakes
-    "I",      # isort
-    "B",      # flake8-bugbear
-    "C4",     # flake8-comprehensions
-    "UP",     # pyupgrade
-    "DJ",     # flake8-django
+    "F",      # Pyflakes - undefined names, unused imports
+    "I",      # isort - import sorting
+    "N",      # pep8-naming - naming conventions
+    "UP",     # pyupgrade - upgrade syntax for newer Python
+
+    # Code Quality
+    "B",      # flake8-bugbear - common bugs and design problems
+    "C4",     # flake8-comprehensions - better list/dict comprehensions
+    "C90",    # mccabe - complexity checker
+    "PIE",    # flake8-pie - misc lints
+    "SIM",    # flake8-simplify - simplify code
+    "PERF",   # Perflint - performance anti-patterns
+    "FURB",   # refurb - modernize code
+    "RUF",    # Ruff-specific rules
+
+    # Security
+    "S",      # flake8-bandit - security issues
+    "T10",    # flake8-debugger - no debugger statements
+
+    # Django-specific
+    "DJ",     # flake8-django - Django best practices
+
+    # Type Checking
+    "TCH",    # flake8-type-checking - type checking imports
+    "PYI",    # flake8-pyi - type stub files
+    "ANN",    # flake8-annotations - type annotations
+
+    # Testing
+    "PT",     # flake8-pytest-style - pytest best practices
+
+    # Documentation
+    "D",      # pydocstyle - docstring conventions
+
+    # Error Handling
+    "TRY",    # tryceratops - exception handling
+    "EM",     # flake8-errmsg - exception messages
+    "RSE",    # flake8-raise - raise statements
+
+    # Imports
+    "TID",    # flake8-tidy-imports - import hygiene
+    "ICN",    # flake8-import-conventions - import aliases
+
+    # Strings
+    "Q",      # flake8-quotes - quote consistency
+    "ISC",    # flake8-implicit-str-concat - string concatenation
+    "FLY",    # flynt - f-string conversion
+
+    # Code Cleanliness
+    "A",      # flake8-builtins - no shadowing builtins
+    "COM",    # flake8-commas - trailing commas
+    "ERA",    # eradicate - commented-out code
+    "ARG",    # flake8-unused-arguments - unused args
+    "PTH",    # flake8-use-pathlib - use pathlib
+    "SLF",    # flake8-self - private member access
+    "RET",    # flake8-return - return statements
+    "G",      # flake8-logging-format - logging format
+    "LOG",    # flake8-logging - logging best practices
+    "INP",    # flake8-no-pep420 - require __init__.py
+    "EXE",    # flake8-executable - shebang checks
+    "T20",    # flake8-print - no print statements
+
+    # Date/Time
+    "DTZ",    # flake8-datetimez - timezone-aware datetimes
+
+    # Pylint
+    "PL",     # Pylint - comprehensive linting
+    "PLC",    # Pylint conventions
+    "PLE",    # Pylint errors
+    "PLR",    # Pylint refactor suggestions
+    "PLW",    # Pylint warnings
+
+    # Async
+    "ASYNC",  # flake8-async - async best practices
+
+    # Numpy/Pandas (if used)
+    "NPY",    # NumPy-specific rules
+    "PD",     # pandas-vet - pandas best practices
+
+    # Airflow (included for completeness)
+    "AIR",    # Airflow rules
 ]
+
 ignore = [
-    "E501",   # line too long (handled by formatter)
+    # Formatting (handled by ruff format)
+    "E501",   # line too long
+    "W191",   # indentation contains tabs
+    "COM812", # trailing comma missing (conflicts with formatter)
+    "ISC001", # implicit string concat (conflicts with formatter)
+
+    # Testing
+    "S101",   # assert used (needed for pytest)
+
+    # Django-specific false positives
+    "RUF012", # mutable class attributes (Django Meta classes)
+    "DTZ011", # date.today() (Django timezone handling)
+    "ARG001", # unused function argument (Django views/signals)
+    "ARG002", # unused method argument (Django views/methods)
+
+    # Flexibility
+    "PLR0913", # too many arguments (Django views often have many)
+    "PLR2004", # magic value comparison (acceptable in tests)
+    "PLR0911", # too many return statements
+    "PLR0912", # too many branches
+    "PLR0915", # too many statements
+    "TRY003", # long exception message
+    "EM101",  # string literal in exception
+    "EM102",  # f-string in exception
+    "RET504", # unnecessary variable before return
+    "SIM108", # ternary operator (sometimes less readable)
+
+    # Security false positives
+    "S105",   # hardcoded password (config patterns)
+    "S106",   # hardcoded password (config patterns)
+    "S107",   # hardcoded password (config patterns)
+    "S311",   # random not for crypto (acceptable for non-crypto uses)
+
+    # Documentation (enable gradually)
+    "D100",   # missing docstring in public module
+    "D101",   # missing docstring in public class
+    "D102",   # missing docstring in public method
+    "D103",   # missing docstring in public function
+    "D104",   # missing docstring in public package
+    "D105",   # missing docstring in magic method
+    "D106",   # missing docstring in public nested class
+    "D107",   # missing docstring in __init__
+    "D200",   # one-line docstring should fit on one line
+    "D203",   # 1 blank line required before class docstring (conflicts with D211)
+    "D212",   # multi-line docstring summary should start at first line (conflicts with D213)
+    "D401",   # first line should be in imperative mood
+    "D415",   # first line should end with punctuation
+
+    # Type annotations (enable gradually)
+    "ANN001", # missing type annotation for function argument
+    "ANN002", # missing type annotation for *args
+    "ANN003", # missing type annotation for **kwargs
+    "ANN201", # missing return type annotation for public function
+    "ANN202", # missing return type annotation for private function
+    "ANN204", # missing return type annotation for special method
+    "ANN206", # missing return type annotation for classmethod
 ]
+
+[tool.ruff.lint.per-file-ignores]
+# Test files - allow assertions, magic values, unused args
+"tests/*" = ["S101", "PLR2004", "ARG", "ANN", "D"]
+"e2e/*" = ["S101", "PLR2004", "ARG", "ANN", "D"]
+"**/tests/*" = ["S101", "PLR2004", "ARG", "ANN", "D"]
+"conftest.py" = ["ARG", "ANN", "D"]
+
+# Settings files - star imports are Django convention
+"settings/*" = ["F405", "F403"]
+"**/settings/*.py" = ["F405", "F403"]
+
+# Scripts and tools
+"fabfile.py" = ["T201", "INP001", "ANN", "D"]
+"manage.py" = ["INP001"]
+
+# Migrations - auto-generated, minimal linting
+"**/migrations/*.py" = ["D", "ANN", "ARG", "N999", "E501"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["trips", "django_carlog"]
+force-single-line = false
+lines-after-imports = 2
+section-order = ["future", "standard-library", "django", "third-party", "first-party", "local-folder"]
+
+[tool.ruff.lint.isort.sections]
+django = ["django"]
+
+[tool.ruff.lint.flake8-pytest-style]
+fixture-parentheses = false
+parametrize-names-type = "tuple"
+parametrize-values-type = "list"
+
+[tool.ruff.lint.flake8-quotes]
+inline-quotes = "double"
+docstring-quotes = "double"
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "parents"
+
+[tool.ruff.lint.flake8-type-checking]
+strict = true
+
+[tool.ruff.lint.mccabe]
+max-complexity = 12
+
+[tool.ruff.lint.pylint]
+max-args = 8
+max-branches = 15
+max-returns = 8
+max-statements = 60
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+docstring-code-format = true
 
 [tool.mypy]
 python_version = "3.12"

@@ -2,9 +2,10 @@
 
 from decimal import Decimal
 
-import pytest
 from django.test import RequestFactory
 from django.utils import timezone
+
+import pytest
 
 from trips.models import Car, Odometer, Trip
 from trips.serializers import CarSerializer, OdometerSerializer, TripSerializer

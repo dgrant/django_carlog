@@ -2,8 +2,9 @@
 E2E tests for the Django Admin interface.
 """
 
-import pytest
 from django.contrib.auth.models import User
+
+import pytest
 from playwright.sync_api import Page, expect
 
 
