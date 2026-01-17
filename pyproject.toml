@@ -148,11 +148,7 @@ ignore = [
     "ARG002", # unused method argument (Django views/methods)
 
     # Flexibility
-    "PLR0913", # too many arguments (Django views often have many)
     "PLR2004", # magic value comparison (acceptable in tests)
-    "PLR0911", # too many return statements
-    "PLR0912", # too many branches
-    "PLR0915", # too many statements
     "TRY003", # long exception message
     "EM101",  # string literal in exception
     "EM102",  # f-string in exception
