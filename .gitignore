@@ -1,9 +1,38 @@
 *.pyc
+__pycache__/
 /env
+/venv
+/.venv
 django_carlog.pid
 django_carlog/settings/production.py
+django_carlog/settings/local.py
 /static/admin
 /static/rest_framework
 /backups
 *.log
 .idea/
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Coverage
+.coverage
+htmlcov/
+coverage.xml
+
+# pytest
+.pytest_cache/
+
+# ruff
+.ruff_cache/
+
+# mypy
+.mypy_cache/
+
+# Docker
+.docker/
+
+# uv
+.python-version
