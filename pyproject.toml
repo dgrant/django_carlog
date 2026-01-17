@@ -16,6 +16,7 @@ dependencies = [
     "django-allauth",
     "PyJWT",
     "cryptography",
+    "requests",
     "gunicorn",
     "whitenoise",
 ]

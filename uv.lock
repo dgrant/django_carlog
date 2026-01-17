@@ -363,6 +363,7 @@ dependencies = [
     { name = "mysqlclient" },
     { name = "psycopg2-binary" },
     { name = "pyjwt" },
+    { name = "requests" },
     { name = "whitenoise" },
 ]
 
@@ -404,6 +405,7 @@ requires-dist = [
     { name = "pytest-cov", marker = "extra == 'dev'" },
     { name = "pytest-django", marker = "extra == 'dev'" },
     { name = "pytest-playwright", marker = "extra == 'dev'" },
+    { name = "requests" },
     { name = "ruff", marker = "extra == 'dev'" },
     { name = "whitenoise" },
 ]
