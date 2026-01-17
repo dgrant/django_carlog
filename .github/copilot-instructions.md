@@ -5,10 +5,10 @@
 This is a Django REST API for car trip tracking (carlog2). It allows tracking car trips, odometer readings, and car information through a RESTful API.
 
 **Tech Stack:**
-- Django 3.0.10
+- Django 3.0.10 (Note: This is an older version; consider upgrading to Django 4.2 LTS or 5.x for security)
 - Django REST Framework 3.11.1
 - MySQL database (via mysqlclient)
-- Python 3.6+
+- Python 3.6+ (Note: Python 3.6 is EOL; consider upgrading to Python 3.9+ for security)
 - Additional: django-extensions, django-filter, django-model-utils
 
 ## Project Structure
@@ -137,7 +137,7 @@ All commits must pass pre-commit hooks (`.pre-commit-config.yaml`):
 
 ### Python Style Conventions
 - Use f-strings for string formatting (enforced by pyupgrade)
-- Python 3.6+ syntax
+- Python 3.6+ syntax (pyupgrade configured with `--py36-plus`)
 - Follow PEP 8 conventions
 - Use model_utils.models.TimeStampedModel for models with timestamps
 - Models should have `__str__()` methods
@@ -207,5 +207,5 @@ All commits must pass pre-commit hooks (`.pre-commit-config.yaml`):
 
 - The project uses django-debug-toolbar for development debugging
 - MySQL is the database backend (not SQLite)
-- The project appears to have a React frontend component (react-cms with TypeScript/TSLint/ESLint)
+- Pre-commit hooks include linting configurations for TypeScript/React (TSLint/ESLint) but the React frontend is not currently in this repository
 - Uses django-extensions for enhanced management commands
