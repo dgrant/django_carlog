@@ -76,7 +76,17 @@ WSGI_APPLICATION = "django_carlog.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-# Database configuration is set in local.py or production.py
+# Default to SQLite for development; override in local.py or production.py
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
+}
+
+# SECURITY WARNING: keep the secret key used in production secret!
+# This default is for development only - override in production.py
+SECRET_KEY = "django-insecure-development-only-change-in-production"
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
