@@ -13,10 +13,7 @@ dependencies = [
     "django-environ",
     "djangorestframework",
     "django-filter",
-    "django-allauth",
-    "PyJWT",
-    "cryptography",
-    "requests",
+    "django-allauth[socialaccount]",
     "gunicorn",
     "whitenoise",
 ]
