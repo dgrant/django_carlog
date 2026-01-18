@@ -31,18 +31,18 @@ ALLOWED_HOSTS.extend([
 # Remove duplicates while preserving order
 ALLOWED_HOSTS = list(dict.fromkeys(ALLOWED_HOSTS))
 
-# Debug logging - print to stdout so it appears in Render logs
-print(f"[DJANGO_CARLOG] DEBUG mode: {DEBUG}", file=sys.stderr)
-print(f"[DJANGO_CARLOG] ALLOWED_HOSTS: {ALLOWED_HOSTS}", file=sys.stderr)
-print(f"[DJANGO_CARLOG] RENDER_EXTERNAL_HOSTNAME: {RENDER_EXTERNAL_HOSTNAME}", file=sys.stderr)
-print(f"[DJANGO_CARLOG] DATABASE_URL set: {bool(DATABASE_URL)}", file=sys.stderr)
-
 # CSRF trusted origins for HTTPS
 CSRF_TRUSTED_ORIGINS = [f"https://{host}" for host in ALLOWED_HOSTS if host]
 
 # Database configuration - use DATABASE_URL from Render PostgreSQL
 # Falls back to MySQL config for production with external MySQL
 DATABASE_URL = os.environ.get("DATABASE_URL")
+
+# Debug logging - print to stdout so it appears in Render logs
+print(f"[DJANGO_CARLOG] DEBUG mode: {DEBUG}", file=sys.stderr)
+print(f"[DJANGO_CARLOG] ALLOWED_HOSTS: {ALLOWED_HOSTS}", file=sys.stderr)
+print(f"[DJANGO_CARLOG] RENDER_EXTERNAL_HOSTNAME: {RENDER_EXTERNAL_HOSTNAME}", file=sys.stderr)
+print(f"[DJANGO_CARLOG] DATABASE_URL set: {bool(DATABASE_URL)}", file=sys.stderr)
 if DATABASE_URL:
     # Render PostgreSQL (simplest for testing)
     DATABASES = {
