@@ -111,12 +111,7 @@ LOGGING = {
         "django": {
             "handlers": ["console"],
             "level": "INFO",
-            "propagate": False,
-        },
-        "django.request": {
-            "handlers": ["console"],
-            "level": "INFO",
-            "propagate": False,
+            "propagate": True,
         },
         "trips": {
             "handlers": ["console"],
