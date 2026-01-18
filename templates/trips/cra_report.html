@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}CRA Mileage Report - CarLog{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12 d-flex justify-content-between align-items-center">
+        <h1><i class="bi bi-file-earmark-text"></i> CRA Mileage Report</h1>
+        <button onclick="window.print()" class="btn btn-outline-primary d-print-none">
+            <i class="bi bi-printer"></i> Print Report
+        </button>
+    </div>
+</div>
+
+<!-- Year Selection -->
+<div class="row mb-4 d-print-none">
+    <div class="col-md-4">
+        <form method="get" class="d-flex gap-2">
+            <select name="year" class="form-select">
+                {% for y in years %}
+                <option value="{{ y }}" {% if y == selected_year %}selected{% endif %}>{{ y }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-arrow-right"></i> Go
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Report Header (for printing) -->
+<div class="d-none d-print-block mb-4">
+    <h2>Vehicle Mileage Log - {{ selected_year }}</h2>
+    <p>For Canada Revenue Agency (CRA) Tax Purposes</p>
+</div>
+
+<!-- Summary Cards -->
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <h6 class="text-muted">Total Medical Trips</h6>
+                <h2 class="text-danger">{{ medical_summary.trip_count|default:0 }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <h6 class="text-muted">Total Medical Distance</h6>
+                <h2 class="text-danger">{{ medical_summary.total_distance|floatformat:1|default:0 }} km</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <h6 class="text-muted">CRA Rate ({{ selected_year }})</h6>
+                <h2 class="text-success">${{ cra_rate }}/km</h2>
+                <small class="text-muted">Estimated deduction: ${{ estimated_deduction|floatformat:2 }}</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Monthly Breakdown -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-calendar3"></i> Monthly Medical Mileage Summary</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Month</th>
+                                <th class="text-center">Trips</th>
+                                <th class="text-end">Distance (km)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for month in monthly_data %}
+                            <tr>
+                                <td>{{ month.month_name }}</td>
+                                <td class="text-center">{{ month.trip_count }}</td>
+                                <td class="text-end">{{ month.total_distance|floatformat:1 }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center text-muted py-4">No medical trips recorded for {{ selected_year }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        {% if monthly_data %}
+                        <tfoot class="table-light fw-bold">
+                            <tr>
+                                <td>Total</td>
+                                <td class="text-center">{{ medical_summary.trip_count|default:0 }}</td>
+                                <td class="text-end">{{ medical_summary.total_distance|floatformat:1|default:0 }} km</td>
+                            </tr>
+                        </tfoot>
+                        {% endif %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Detailed Trip Log -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-list-check"></i> Detailed Medical Trip Log</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Date</th>
+                                <th>Destination</th>
+                                <th>Purpose</th>
+                                <th class="text-end">Distance (km)</th>
+                                <th>Vehicle</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for trip in medical_trips %}
+                            <tr>
+                                <td>{{ trip.date|date:"Y-m-d" }}</td>
+                                <td>{{ trip.destination }}</td>
+                                <td>{{ trip.reason }}</td>
+                                <td class="text-end">{{ trip.distance|floatformat:1 }}</td>
+                                <td>{{ trip.car.name }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-4">No medical trips recorded for {{ selected_year }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CRA Info -->
+<div class="row mt-4 d-print-none">
+    <div class="col-12">
+        <div class="alert alert-info">
+            <h6><i class="bi bi-info-circle"></i> CRA Medical Expense Information</h6>
+            <p class="mb-1">You may be able to claim medical travel expenses if you traveled more than 40 km (one way) to obtain medical services.</p>
+            <p class="mb-0"><small>For detailed information, visit: <a href="https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/tax-return/completing-a-tax-return/deductions-credits-expenses/lines-33099-33199-eligible-medical-expenses-you-claim-on-your-tax-return.html" target="_blank">CRA Medical Expenses</a></small></p>
+        </div>
+    </div>
+</div>
+
+<!-- Print Styles -->
+<style>
+    @media print {
+        .navbar, footer, .d-print-none { display: none !important; }
+        .card { border: 1px solid #dee2e6 !important; }
+        .card-header { background-color: #f8f9fa !important; }
+    }
+</style>
+{% endblock %}
