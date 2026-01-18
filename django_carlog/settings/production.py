@@ -32,7 +32,15 @@ ALLOWED_HOSTS.extend([
 ALLOWED_HOSTS = list(dict.fromkeys(ALLOWED_HOSTS))
 
 # CSRF trusted origins for HTTPS
-CSRF_TRUSTED_ORIGINS = [f"https://{host}" for host in ALLOWED_HOSTS if host]
+# Note: ALLOWED_HOSTS uses ".domain.com" for wildcards, but CSRF_TRUSTED_ORIGINS uses "*.domain.com"
+CSRF_TRUSTED_ORIGINS = []
+for host in ALLOWED_HOSTS:
+    if host:
+        if host.startswith("."):
+            # Convert ".domain.com" wildcard to "*.domain.com" format for CSRF
+            CSRF_TRUSTED_ORIGINS.append(f"https://*{host}")
+        else:
+            CSRF_TRUSTED_ORIGINS.append(f"https://{host}")
 
 # Database configuration - use DATABASE_URL from Render PostgreSQL
 # Falls back to MySQL config for production with external MySQL
@@ -41,6 +49,7 @@ DATABASE_URL = os.environ.get("DATABASE_URL")
 # Debug logging - print to stdout so it appears in Render logs
 print(f"[DJANGO_CARLOG] DEBUG mode: {DEBUG}", file=sys.stderr)
 print(f"[DJANGO_CARLOG] ALLOWED_HOSTS: {ALLOWED_HOSTS}", file=sys.stderr)
+print(f"[DJANGO_CARLOG] CSRF_TRUSTED_ORIGINS: {CSRF_TRUSTED_ORIGINS}", file=sys.stderr)
 print(f"[DJANGO_CARLOG] RENDER_EXTERNAL_HOSTNAME: {RENDER_EXTERNAL_HOSTNAME}", file=sys.stderr)
 print(f"[DJANGO_CARLOG] DATABASE_URL set: {bool(DATABASE_URL)}", file=sys.stderr)
 if DATABASE_URL:
