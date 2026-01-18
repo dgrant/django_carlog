@@ -1,6 +1,7 @@
 """Production settings for Render deployment."""
 
 import os
+import sys
 
 import dj_database_url
 
@@ -9,7 +10,7 @@ from .base import *
 
 # Security settings
 SECRET_KEY = os.environ["SECRET_KEY"]
-DEBUG = False
+DEBUG = os.environ.get("DEBUG", "False").lower() in ("true", "1", "yes")
 
 # Allowed hosts from environment
 _allowed_hosts_env = os.environ.get("ALLOWED_HOSTS", "")
@@ -29,6 +30,12 @@ ALLOWED_HOSTS.extend([
 
 # Remove duplicates while preserving order
 ALLOWED_HOSTS = list(dict.fromkeys(ALLOWED_HOSTS))
+
+# Debug logging - print to stdout so it appears in Render logs
+print(f"[DJANGO_CARLOG] DEBUG mode: {DEBUG}", file=sys.stderr)
+print(f"[DJANGO_CARLOG] ALLOWED_HOSTS: {ALLOWED_HOSTS}", file=sys.stderr)
+print(f"[DJANGO_CARLOG] RENDER_EXTERNAL_HOSTNAME: {RENDER_EXTERNAL_HOSTNAME}", file=sys.stderr)
+print(f"[DJANGO_CARLOG] DATABASE_URL set: {bool(DATABASE_URL)}", file=sys.stderr)
 
 # CSRF trusted origins for HTTPS
 CSRF_TRUSTED_ORIGINS = [f"https://{host}" for host in ALLOWED_HOSTS if host]
