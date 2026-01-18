@@ -1,0 +1,39 @@
+{
+  "name": "Django CarLog Development",
+  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "charliermarsh.ruff",
+        "batisteo.vscode-django",
+        "ms-python.mypy-type-checker"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": ".venv/bin/python",
+        "python.analysis.typeCheckingMode": "basic",
+        "[python]": {
+          "editor.defaultFormatter": "charliermarsh.ruff",
+          "editor.formatOnSave": true
+        }
+      }
+    }
+  },
+  "postCreateCommand": "pip install uv && uv sync --all-extras",
+  "forwardPorts": [8000],
+  "portsAttributes": {
+    "8000": {
+      "label": "Django Server",
+      "onAutoForward": "notify"
+    }
+  },
+  "remoteEnv": {
+    "DJANGO_SETTINGS_MODULE": "django_carlog.settings.development"
+  }
+}

@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - CarLog{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="mb-3"><i class="bi bi-speedometer2"></i> Dashboard</h1>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-light">
+            <div class="card-body text-center py-4">
+                <h5 class="card-title mb-3">Quick Add Trip</h5>
+                <div class="d-flex flex-wrap justify-content-center gap-3">
+                    <a href="{% url 'trips:trip_add_quick' %}?destination=Hospital&reason=Medical" 
+                       class="btn btn-danger btn-lg quick-add-btn hospital-btn">
+                        <i class="bi bi-hospital"></i> Hospital Trip
+                    </a>
+                    <a href="{% url 'trips:trip_add' %}" class="btn btn-primary btn-lg quick-add-btn">
+                        <i class="bi bi-plus-circle"></i> Custom Trip
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row mb-4">
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card stats-card primary h-100">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">Total Trips ({{ current_year }})</h6>
+                <h2 class="card-title mb-0">{{ trips_this_year }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card stats-card success h-100">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">Total Distance ({{ current_year }})</h6>
+                <h2 class="card-title mb-0">{{ total_distance_year|floatformat:1 }} km</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card stats-card warning h-100">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">Medical Trips ({{ current_year }})</h6>
+                <h2 class="card-title mb-0">{{ medical_trips_year }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card stats-card info h-100">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">Medical Distance ({{ current_year }})</h6>
+                <h2 class="card-title mb-0">{{ medical_distance_year|floatformat:1 }} km</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Trips -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-clock-history"></i> Recent Trips</h5>
+                <a href="{% url 'trips:trip_list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body p-0">
+                {% if recent_trips %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Date</th>
+                                <th>Destination</th>
+                                <th>Reason</th>
+                                <th>Distance</th>
+                                <th>Car</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for trip in recent_trips %}
+                            <tr>
+                                <td>{{ trip.date|date:"M d, Y" }}</td>
+                                <td>{{ trip.destination }}</td>
+                                <td>
+                                    {% if trip.reason == "Medical" %}
+                                    <span class="badge bg-danger">{{ trip.reason }}</span>
+                                    {% else %}
+                                    {{ trip.reason }}
+                                    {% endif %}
+                                </td>
+                                <td>{{ trip.distance }} km</td>
+                                <td>{{ trip.car.name }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted text-center py-4 mb-0">No trips recorded yet. Add your first trip!</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

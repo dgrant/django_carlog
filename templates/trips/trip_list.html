@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}All Trips - CarLog{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12 d-flex justify-content-between align-items-center">
+        <h1><i class="bi bi-list-ul"></i> All Trips</h1>
+        <a href="{% url 'trips:trip_add' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Add Trip
+        </a>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Year</label>
+                        <select name="year" class="form-select">
+                            <option value="">All Years</option>
+                            {% for y in years %}
+                            <option value="{{ y }}" {% if y|stringformat:"s" == selected_year %}selected{% endif %}>{{ y }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Car</label>
+                        <select name="car" class="form-select">
+                            <option value="">All Cars</option>
+                            {% for car in cars %}
+                            <option value="{{ car.id }}" {% if car.id|stringformat:"s" == selected_car %}selected{% endif %}>{{ car.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Reason</label>
+                        <select name="reason" class="form-select">
+                            <option value="">All Reasons</option>
+                            {% for reason in reasons %}
+                            <option value="{{ reason }}" {% if reason == selected_reason %}selected{% endif %}>{{ reason }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-outline-primary me-2">
+                            <i class="bi bi-funnel"></i> Filter
+                        </button>
+                        <a href="{% url 'trips:trip_list' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle"></i> Clear
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Summary -->
+{% if trips %}
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="alert alert-info mb-0">
+            <strong>{{ trips|length }}</strong> trips | 
+            <strong>{{ total_distance|floatformat:1 }}</strong> km total
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Trips Table -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body p-0">
+                {% if trips %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Date</th>
+                                <th>Destination</th>
+                                <th>Reason</th>
+                                <th>Distance</th>
+                                <th>Car</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for trip in trips %}
+                            <tr>
+                                <td>{{ trip.date|date:"M d, Y" }}</td>
+                                <td>{{ trip.destination }}</td>
+                                <td>
+                                    {% if trip.reason == "Medical" %}
+                                    <span class="badge bg-danger">{{ trip.reason }}</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">{{ trip.reason }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ trip.distance }} km</td>
+                                <td>{{ trip.car.name }}</td>
+                                <td>
+                                    <a href="{% url 'trips:trip_edit' trip.pk %}" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a href="{% url 'trips:trip_delete' trip.pk %}" class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted text-center py-4 mb-0">No trips found matching your criteria.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
