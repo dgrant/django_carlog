@@ -64,7 +64,7 @@ cd "$WORKTREE_ABS"
 unset VIRTUAL_ENV
 
 echo "Installing dependencies with uv..."
-uv sync
+uv sync --extra dev
 
 echo "Installing pre-commit hooks..."
 uv run pre-commit install
