@@ -37,8 +37,7 @@ docker run --rm -d --name "$CONTAINER_NAME" \
   -e PORT="$PORT" \
   -v "$DATA_DIR:/app/data" \
   -p "$PORT:$PORT" \
-  "$IMAGE_NAME" \
-  sh -c "uv run python manage.py migrate && uv run gunicorn --bind 0.0.0.0:\$PORT django_carlog.wsgi:application"
+$IMAGE_NAME
 
 echo ""
 echo "Container started! View logs with: docker logs -f $CONTAINER_NAME"
