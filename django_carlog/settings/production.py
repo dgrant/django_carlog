@@ -10,7 +10,9 @@ from .base import *
 
 # Security settings
 SECRET_KEY = os.environ["SECRET_KEY"]
-DEBUG = os.environ.get("DEBUG", "False").lower() in ("true", "1", "yes")
+# TEMPORARY: Default to DEBUG=True for troubleshooting 400 errors
+# Change back to "False" once the issue is resolved
+DEBUG = os.environ.get("DEBUG", "True").lower() in ("true", "1", "yes")
 
 # Allowed hosts from environment
 _allowed_hosts_env = os.environ.get("ALLOWED_HOSTS", "")
@@ -77,3 +79,43 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 # Static files with WhiteNoise
 MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+# Verbose logging configuration for debugging
+# This outputs all Django logs to console (visible in Render logs)
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "[{levelname}] {asctime} {name} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "DEBUG",
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
+        "django.request": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
+        "django.security": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
+    },
+}
