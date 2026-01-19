@@ -60,6 +60,9 @@ cp "$SOURCE_DIR/django_carlog/settings/local.py" "$WORKTREE_ABS/django_carlog/se
 echo "Changing to new worktree directory..."
 cd "$WORKTREE_ABS"
 
+# Unset VIRTUAL_ENV to avoid conflicts with any active environment from the source repo
+unset VIRTUAL_ENV
+
 echo "Installing dependencies with uv..."
 uv sync
 
