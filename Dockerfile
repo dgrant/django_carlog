@@ -33,6 +33,9 @@ RUN uv run python manage.py collectstatic --noinput --settings=django_carlog.set
 # Expose port (Render uses $PORT env var)
 EXPOSE 8000
 
+# Set default Django settings module
+ENV DJANGO_SETTINGS_MODULE=django_carlog.settings.production
+
 # Default command - run migrations then start gunicorn
 # Uses $PORT env var (Render sets this), defaults to 8000
 CMD ["sh", "-c", "uv run python manage.py migrate && uv run gunicorn --bind 0.0.0.0:${PORT:-8000} django_carlog.wsgi:application"]
