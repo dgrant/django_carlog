@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__render__list_logs",
+      "mcp__render__list_deploys",
+      "mcp__render__list_postgres_instances",
+      "Bash(docker logs:*)"
+    ]
+  }
+}
