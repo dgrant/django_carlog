@@ -27,6 +27,9 @@ RUN uv sync --frozen --no-dev
 # Copy project
 COPY . .
 
+# Collect static files at build time (uses base settings with default SECRET_KEY)
+RUN uv run python manage.py collectstatic --noinput --settings=django_carlog.settings.base
+
 # Expose port (Render uses $PORT env var)
 EXPOSE 8000
 

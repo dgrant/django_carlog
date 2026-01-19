@@ -31,12 +31,6 @@ ALLOWED_HOSTS.extend([
 # Remove duplicates while preserving order
 ALLOWED_HOSTS = list(dict.fromkeys(ALLOWED_HOSTS))
 
-# Debug logging - print to stdout so it appears in Render logs
-print(f"[DJANGO_CARLOG] DEBUG mode: {DEBUG}", file=sys.stderr)
-print(f"[DJANGO_CARLOG] ALLOWED_HOSTS: {ALLOWED_HOSTS}", file=sys.stderr)
-print(f"[DJANGO_CARLOG] RENDER_EXTERNAL_HOSTNAME: {RENDER_EXTERNAL_HOSTNAME}", file=sys.stderr)
-print(f"[DJANGO_CARLOG] DATABASE_URL set: {bool(DATABASE_URL)}", file=sys.stderr)
-
 # CSRF trusted origins for HTTPS
 CSRF_TRUSTED_ORIGINS = [f"https://{host}" for host in ALLOWED_HOSTS if host]
 
@@ -76,3 +70,8 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 # Static files with WhiteNoise
 MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+# Debug logging - print to stderr so it appears in Render logs
+print(f"[DJANGO_CARLOG] DEBUG mode: {DEBUG}", file=sys.stderr)
+print(f"[DJANGO_CARLOG] ALLOWED_HOSTS: {ALLOWED_HOSTS}", file=sys.stderr)
+print(f"[DJANGO_CARLOG] DATABASE_URL set: {bool(DATABASE_URL)}", file=sys.stderr)
