@@ -30,9 +30,5 @@ services:
       - key: GOOGLE_CLIENT_SECRET
         sync: false
     healthCheckPath: /trips/api/
-    buildCommand: |
-      uv sync --frozen --no-dev && \
-      uv run python manage.py collectstatic --noinput --settings=django_carlog.settings.production && \
-      uv run python manage.py migrate --settings=django_carlog.settings.production
-    startCommand: uv run gunicorn --bind 0.0.0.0:$PORT django_carlog.wsgi:application
+    startCommand: uv run python manage.py migrate --settings=django_carlog.settings.production && uv run gunicorn --bind 0.0.0.0:$PORT django_carlog.wsgi:application
     autoDeploy: true
