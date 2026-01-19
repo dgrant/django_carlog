@@ -1,7 +1,7 @@
 """Production settings for Render deployment."""
 
+import logging
 import os
-import sys
 
 import dj_database_url
 
@@ -38,11 +38,12 @@ CSRF_TRUSTED_ORIGINS = [f"https://{host}" for host in ALLOWED_HOSTS if host]
 # Falls back to MySQL config for production with external MySQL
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
-# Debug logging - print to stderr so it appears in Render logs
-print(f"[DJANGO_CARLOG] DEBUG mode: {DEBUG}", file=sys.stderr)
-print(f"[DJANGO_CARLOG] ALLOWED_HOSTS: {ALLOWED_HOSTS}", file=sys.stderr)
-print(f"[DJANGO_CARLOG] RENDER_EXTERNAL_HOSTNAME: {RENDER_EXTERNAL_HOSTNAME}", file=sys.stderr)
-print(f"[DJANGO_CARLOG] DATABASE_URL set: {bool(DATABASE_URL)}", file=sys.stderr)
+# Debug logging for Render deployment diagnostics
+_logger = logging.getLogger(__name__)
+_logger.info("DEBUG mode: %s", DEBUG)
+_logger.info("ALLOWED_HOSTS: %s", ALLOWED_HOSTS)
+_logger.info("RENDER_EXTERNAL_HOSTNAME: %s", RENDER_EXTERNAL_HOSTNAME)
+_logger.info("DATABASE_URL set: %s", bool(DATABASE_URL))
 if DATABASE_URL:
     # Render PostgreSQL (simplest for testing)
     DATABASES = {
