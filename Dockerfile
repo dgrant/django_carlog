@@ -24,6 +24,10 @@ RUN uv sync --no-dev --no-cache
 # ==============================================================================
 FROM python:3.12-slim AS production
 
+# Python environment settings
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
 # Runtime dependencies only
 RUN apt-get update && apt-get install -y --no-install-recommends \
     default-mysql-client \

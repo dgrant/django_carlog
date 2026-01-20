@@ -28,6 +28,7 @@ DATABASES = {
         "OPTIONS": {
             "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
             "charset": "utf8mb4",
+            "collation": "utf8mb4_unicode_ci",
         },
     }
 }
@@ -60,4 +61,6 @@ LOGIN_REDIRECT_URL = "/trips/api/"
 
 # Security headers (nginx handles SSL termination)
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 CSRF_TRUSTED_ORIGINS = [f"https://{host}" for host in ALLOWED_HOSTS if host and host != "*"]
