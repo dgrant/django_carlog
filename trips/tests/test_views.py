@@ -37,8 +37,8 @@ def sample_trip(db, sample_car):
     """Create a sample trip."""
     return Trip.objects.create(
         date=date(2025, 1, 15),
-        destination="Hospital",
-        reason="Medical",
+        destination="Client Office",
+        reason="Business",
         distance=Decimal("25.5"),
         car=sample_car,
     )
@@ -93,7 +93,6 @@ class TestDashboardView:
         assert "current_year" in response.context
         assert "trips_this_year" in response.context
         assert "total_distance_year" in response.context
-        assert "medical_trips_year" in response.context
         assert "recent_trips" in response.context
 
     def test_dashboard_shows_recent_trips(self, client, sample_trip):
@@ -130,7 +129,7 @@ class TestTripListView:
 
     def test_trip_list_filter_by_reason(self, client, sample_trip):
         """Test filtering trips by reason."""
-        response = client.get(reverse("trips:trip_list"), {"reason": "Medical"})
+        response = client.get(reverse("trips:trip_list"), {"reason": "Business"})
         assert response.status_code == 200
         assert sample_trip in response.context["trips"]
 
@@ -162,11 +161,11 @@ class TestTripCreateView:
         """Test trip create with prefilled values."""
         response = client.get(
             reverse("trips:trip_add"),
-            {"destination": "Hospital", "reason": "Medical"},
+            {"destination": "Client Office", "reason": "Business"},
         )
         assert response.status_code == 200
-        assert response.context["prefill_destination"] == "Hospital"
-        assert response.context["prefill_reason"] == "Medical"
+        assert response.context["prefill_destination"] == "Client Office"
+        assert response.context["prefill_reason"] == "Business"
 
     def test_trip_create_post(self, client, sample_car):
         """Test creating a trip via POST."""
@@ -197,7 +196,7 @@ class TestTripQuickAddView:
         """Test quick add with URL parameters."""
         response = client.get(
             reverse("trips:trip_add_quick"),
-            {"destination": "Hospital", "reason": "Medical"},
+            {"destination": "Client Office", "reason": "Business"},
         )
         assert response.status_code == 200
 
@@ -264,8 +263,8 @@ class TestCRAReportView:
         """Test that CRA report has correct context."""
         response = client.get(reverse("trips:cra_report"), {"year": "2025"})
         assert "years" in response.context
-        assert "medical_trips" in response.context
-        assert "medical_summary" in response.context
+        assert "trips" in response.context
+        assert "trips_summary" in response.context
         assert "monthly_data" in response.context
         assert "cra_rate" in response.context
         assert "estimated_deduction" in response.context

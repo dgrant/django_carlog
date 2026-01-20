@@ -95,11 +95,7 @@
                                 <td>{{ trip.date|date:"M d, Y" }}</td>
                                 <td>{{ trip.destination }}</td>
                                 <td>
-                                    {% if trip.reason == "Medical" %}
-                                    <span class="badge bg-danger">{{ trip.reason }}</span>
-                                    {% else %}
                                     <span class="badge bg-secondary">{{ trip.reason }}</span>
-                                    {% endif %}
                                 </td>
                                 <td>{{ trip.distance }} km</td>
                                 <td>{{ trip.car.name }}</td>
