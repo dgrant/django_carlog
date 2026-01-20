@@ -4,6 +4,7 @@ from decimal import Decimal
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.db.models import Sum
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView,
@@ -11,6 +12,7 @@ from django.views.generic import (
     ListView,
     TemplateView,
     UpdateView,
+    View,
 )
 
 from django_filters import rest_framework as filters
@@ -24,6 +26,20 @@ from trips.serializers import (
     TripSerializer,
     UserSerializer,
 )
+
+
+# =============================================================================
+# Home View (Root Page)
+# =============================================================================
+
+
+class HomeView(View):
+    """Root page - redirects authenticated users to dashboard, shows landing for others."""
+
+    def get(self, request):
+        if request.user.is_authenticated:
+            return redirect("trips:dashboard")
+        return redirect("account_login")
 
 
 # =============================================================================
