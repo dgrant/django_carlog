@@ -6,7 +6,7 @@
 
 # Store the source directory
 SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_NAME="django_carlog"
+REPO_NAME="carlog"
 
 # Check if branch name is provided
 if [ -z "$1" ]; then
@@ -60,8 +60,11 @@ cp "$SOURCE_DIR/django_carlog/settings/local.py" "$WORKTREE_ABS/django_carlog/se
 echo "Changing to new worktree directory..."
 cd "$WORKTREE_ABS"
 
+# Unset VIRTUAL_ENV to avoid conflicts with any active environment from the source repo
+unset VIRTUAL_ENV
+
 echo "Installing dependencies with uv..."
-uv sync
+uv sync --extra dev
 
 echo "Installing pre-commit hooks..."
 uv run pre-commit install
