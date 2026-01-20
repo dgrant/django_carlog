@@ -2,7 +2,7 @@
 name = "django-carlog"
 version = "2.0.0"
 description = "Car trip tracking REST API"
-requires-python = ">=3.12"
+requires-python = ">=3.14"
 dependencies = [
     "Django",
     "mysqlclient",
@@ -33,7 +33,7 @@ dev = [
 ]
 
 [tool.ruff]
-target-version = "py312"
+target-version = "py314"
 line-length = 120
 exclude = [
     ".git",
@@ -248,7 +248,7 @@ line-ending = "auto"
 docstring-code-format = true
 
 [tool.mypy]
-python_version = "3.12"
+python_version = "3.14"
 plugins = ["mypy_django_plugin.main"]
 strict = false
 warn_return_any = true
