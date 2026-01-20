@@ -1,8 +1,8 @@
 # Claude Code Guidelines
 
-## Testing
+## Before Committing
 
-**Always run tests before committing changes.**
+**Always run tests and lint checks before committing changes.**
 
 ```bash
 # Run all tests
@@ -24,6 +24,14 @@ Run pre-commit hooks and mypy before committing:
 ```bash
 uv run pre-commit run --all-files
 uv run mypy trips/ django_carlog/
+```
+
+Pre-commit hooks only run on changed files, but CI runs on all files. Running the full check locally catches issues that pre-commit might miss.
+
+## Development Setup
+
+```bash
+uv sync --all-extras
 ```
 
 ## Deployment
