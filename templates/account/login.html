@@ -3,7 +3,7 @@
 
 {% block title %}Sign In - CarLog{% endblock %}
 
-{% block extra_css %}
+{% block extra_head %}
 <script src="https://accounts.google.com/gsi/client" async></script>
 {% endblock %}
 
@@ -24,7 +24,7 @@
                             data-client_id="{{ provider.app.client_id }}"
                             data-context="signin"
                             data-ux_mode="popup"
-                            data-login_uri="{{ request.scheme }}://{{ request.site.domain }}{% url 'google_login_by_token' %}"
+                            data-login_uri="{{ request.scheme }}://{{ request.get_host }}{% url 'google_login_by_token' %}"
                             data-itp_support="true">
                         </div>
 
