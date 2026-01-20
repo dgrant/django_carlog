@@ -3,6 +3,7 @@
 from datetime import date
 from decimal import Decimal
 
+from django.contrib.auth.models import User
 from django.test import Client
 from django.urls import reverse
 
@@ -43,6 +44,30 @@ def sample_odometer(db, sample_car):
         car=sample_car,
         km=50000,
     )
+
+
+@pytest.fixture
+def user(db):
+    """Create a test user."""
+    return User.objects.create_user(username="testuser", password="testpass123")
+
+
+@pytest.mark.django_db
+class TestHomeView:
+    """Tests for the Home view (root page)."""
+
+    def test_home_redirects_unauthenticated_to_login(self, client):
+        """Test that unauthenticated users are redirected to login."""
+        response = client.get(reverse("home"))
+        assert response.status_code == 302
+        assert "accounts/login" in response.url
+
+    def test_home_redirects_authenticated_to_dashboard(self, client, user):
+        """Test that authenticated users are redirected to dashboard."""
+        client.login(username="testuser", password="testpass123")
+        response = client.get(reverse("home"))
+        assert response.status_code == 302
+        assert response.url == reverse("trips:dashboard")
 
 
 @pytest.mark.django_db
