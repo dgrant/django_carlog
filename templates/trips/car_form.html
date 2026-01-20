@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}{% if form.instance.pk %}Edit{% else %}Add{% endif %} Car - CarLog{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1>
+            <i class="bi bi-{% if form.instance.pk %}pencil{% else %}plus-circle{% endif %}"></i>
+            {% if form.instance.pk %}Edit Car{% else %}Add New Car{% endif %}
+        </h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="id_name" class="form-label">Name</label>
+                        <input type="text" name="name" id="id_name" class="form-control"
+                               value="{{ form.name.value|default:'' }}"
+                               maxlength="20" required autofocus>
+                        {% if form.name.errors %}
+                        <div class="invalid-feedback d-block">{{ form.name.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i>
+                            {% if form.instance.pk %}Update{% else %}Save{% endif %} Car
+                        </button>
+                        <a href="{% url 'trips:car_list' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card bg-light">
+            <div class="card-body">
+                <h6 class="card-title"><i class="bi bi-lightbulb"></i> Tips</h6>
+                <ul class="small mb-0">
+                    <li>Use a short, memorable name for your car</li>
+                    <li>Examples: "Honda Civic", "Tesla", "Work Van"</li>
+                    <li>Car names must be unique</li>
+                </ul>
+            </div>
+        </div>
+
+        {% if form.instance.pk %}
+        <div class="card mt-3 border-danger">
+            <div class="card-body">
+                <h6 class="card-title text-danger"><i class="bi bi-exclamation-triangle"></i> Danger Zone</h6>
+                <a href="{% url 'trips:car_delete' form.instance.pk %}" class="btn btn-outline-danger btn-sm">
+                    <i class="bi bi-trash"></i> Delete this car
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
