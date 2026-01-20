@@ -1,21 +1,32 @@
-# Claude Code Instructions
+# Claude Code Guidelines
 
 ## Before Committing
 
-Always run full lint checks before committing to ensure CI will pass:
+**Always run tests and lint checks before committing changes.**
 
 ```bash
-uv run ruff check .
-uv run ruff format --check .
+# Run all tests
+uv run pytest
+
+# Run unit tests only (faster)
+uv run pytest trips/tests/
+
+# Run E2E tests only
+uv run pytest e2e/
+```
+
+Tests must pass before any PR can be merged.
+
+## Linting
+
+Run pre-commit hooks and mypy before committing:
+
+```bash
+uv run pre-commit run --all-files
+uv run mypy trips/ django_carlog/
 ```
 
 Pre-commit hooks only run on changed files, but CI runs on all files. Running the full check locally catches issues that pre-commit might miss.
-
-## Running Tests
-
-```bash
-uv run pytest trips/tests/ -v
-```
 
 ## Development Setup
 
@@ -36,3 +47,13 @@ To find thread IDs, fetch PR review threads first:
 ```bash
 gh api graphql -f query='query { repository(owner: "dgrant", name: "carlog") { pullRequest(number: PR_NUMBER) { reviewThreads(first: 50) { nodes { id isResolved comments(first: 1) { nodes { body } } } } } } }'
 ```
+
+## Deployment
+
+The app deploys to Linode via Docker when changes are pushed to `master`. The CI/CD pipeline:
+
+1. Runs lint checks (pre-commit + mypy)
+2. Runs unit tests
+3. Runs E2E tests
+4. Builds and pushes Docker image to ghcr.io
+5. Deploys to Linode via SSH
