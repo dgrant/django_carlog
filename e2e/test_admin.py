@@ -2,10 +2,18 @@
 E2E tests for the Django Admin interface.
 """
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from django.contrib.auth.models import User
 
 import pytest
-from playwright.sync_api import Page, expect
+from playwright.sync_api import expect
+
+
+if TYPE_CHECKING:
+    from playwright.sync_api import Page
 
 
 @pytest.fixture
