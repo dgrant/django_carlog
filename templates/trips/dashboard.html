@@ -16,12 +16,8 @@
             <div class="card-body text-center py-4">
                 <h5 class="card-title mb-3">Quick Add Trip</h5>
                 <div class="d-flex flex-wrap justify-content-center gap-3">
-                    <a href="{% url 'trips:trip_add_quick' %}?destination=Hospital&reason=Medical"
-                       class="btn btn-danger btn-lg quick-add-btn hospital-btn">
-                        <i class="bi bi-hospital"></i> Hospital Trip
-                    </a>
                     <a href="{% url 'trips:trip_add' %}" class="btn btn-primary btn-lg quick-add-btn">
-                        <i class="bi bi-plus-circle"></i> Custom Trip
+                        <i class="bi bi-plus-circle"></i> Add Trip
                     </a>
                 </div>
             </div>
@@ -31,7 +27,7 @@
 
 <!-- Stats Cards -->
 <div class="row mb-4">
-    <div class="col-md-3 col-sm-6 mb-3">
+    <div class="col-md-6 col-sm-6 mb-3">
         <div class="card stats-card primary h-100">
             <div class="card-body">
                 <h6 class="card-subtitle mb-2 text-muted">Total Trips ({{ current_year }})</h6>
@@ -39,27 +35,11 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3 col-sm-6 mb-3">
+    <div class="col-md-6 col-sm-6 mb-3">
         <div class="card stats-card success h-100">
             <div class="card-body">
                 <h6 class="card-subtitle mb-2 text-muted">Total Distance ({{ current_year }})</h6>
                 <h2 class="card-title mb-0">{{ total_distance_year|floatformat:1 }} km</h2>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3 col-sm-6 mb-3">
-        <div class="card stats-card warning h-100">
-            <div class="card-body">
-                <h6 class="card-subtitle mb-2 text-muted">Medical Trips ({{ current_year }})</h6>
-                <h2 class="card-title mb-0">{{ medical_trips_year }}</h2>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3 col-sm-6 mb-3">
-        <div class="card stats-card info h-100">
-            <div class="card-body">
-                <h6 class="card-subtitle mb-2 text-muted">Medical Distance ({{ current_year }})</h6>
-                <h2 class="card-title mb-0">{{ medical_distance_year|floatformat:1 }} km</h2>
             </div>
         </div>
     </div>
@@ -91,13 +71,7 @@
                             <tr>
                                 <td>{{ trip.date|date:"M d, Y" }}</td>
                                 <td>{{ trip.destination }}</td>
-                                <td>
-                                    {% if trip.reason == "Medical" %}
-                                    <span class="badge bg-danger">{{ trip.reason }}</span>
-                                    {% else %}
-                                    {{ trip.reason }}
-                                    {% endif %}
-                                </td>
+                                <td>{{ trip.reason }}</td>
                                 <td>{{ trip.distance }} km</td>
                                 <td>{{ trip.car.name }}</td>
                             </tr>
