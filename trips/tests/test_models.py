@@ -1,5 +1,6 @@
 """Unit tests for trips models."""
 
+from datetime import timedelta
 from decimal import Decimal
 
 from django.db import IntegrityError
@@ -82,15 +83,13 @@ class TestTripModel:
 
     def test_trip_ordering(self, car):
         """Test that trips are ordered by date descending."""
-        from datetime import timedelta
-
         today = timezone.now().date()
         yesterday = today - timedelta(days=1)
         tomorrow = today + timedelta(days=1)
 
-        Trip.objects.create(date=yesterday, destination="A", reason="R", distance=Decimal("10"), car=car)
-        Trip.objects.create(date=tomorrow, destination="B", reason="R", distance=Decimal("10"), car=car)
-        Trip.objects.create(date=today, destination="C", reason="R", distance=Decimal("10"), car=car)
+        Trip.objects.create(date=yesterday, destination="A", reason="R", distance=Decimal(10), car=car)
+        Trip.objects.create(date=tomorrow, destination="B", reason="R", distance=Decimal(10), car=car)
+        Trip.objects.create(date=today, destination="C", reason="R", distance=Decimal(10), car=car)
 
         trips = list(Trip.objects.all())
         assert trips[0].date == tomorrow
@@ -131,8 +130,6 @@ class TestOdometerModel:
 
     def test_odometer_ordering(self, car):
         """Test that odometer readings are ordered by date descending."""
-        from datetime import timedelta
-
         today = timezone.now().date()
         yesterday = today - timedelta(days=1)
 

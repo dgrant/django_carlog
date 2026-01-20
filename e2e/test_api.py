@@ -2,14 +2,22 @@
 E2E tests for the REST API endpoints.
 """
 
+from __future__ import annotations
+
 from decimal import Decimal
+from typing import TYPE_CHECKING
 
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 import pytest
-from playwright.sync_api import Page, expect
+from playwright.sync_api import expect
 
 from trips.models import Car, Odometer, Trip
+
+
+if TYPE_CHECKING:
+    from playwright.sync_api import Page
 
 
 @pytest.fixture
@@ -35,7 +43,6 @@ def authenticated_page(page: Page, live_server, test_user):
 def sample_data(test_user):
     """Create sample data for API testing."""
     car = Car.objects.create(name="E2E Test Car")
-    from django.utils import timezone
 
     trip = Trip.objects.create(
         date=timezone.now().date(),

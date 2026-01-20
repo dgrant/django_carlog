@@ -86,9 +86,9 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 
         context["current_year"] = current_year
         context["trips_this_year"] = year_trips.count()
-        context["total_distance_year"] = year_trips.aggregate(total=Sum("distance"))["total"] or Decimal("0")
+        context["total_distance_year"] = year_trips.aggregate(total=Sum("distance"))["total"] or Decimal(0)
         context["medical_trips_year"] = medical_trips.count()
-        context["medical_distance_year"] = medical_trips.aggregate(total=Sum("distance"))["total"] or Decimal("0")
+        context["medical_distance_year"] = medical_trips.aggregate(total=Sum("distance"))["total"] or Decimal(0)
         context["recent_trips"] = Trip.objects.all()[:10]
 
         return context
@@ -132,7 +132,7 @@ class TripListView(LoginRequiredMixin, ListView):
         context["selected_reason"] = self.request.GET.get("reason", "")
 
         # Calculate total distance for filtered results
-        context["total_distance"] = self.get_queryset().aggregate(total=Sum("distance"))["total"] or Decimal("0")
+        context["total_distance"] = self.get_queryset().aggregate(total=Sum("distance"))["total"] or Decimal(0)
 
         return context
 
@@ -264,13 +264,13 @@ class CRAReportView(LoginRequiredMixin, TemplateView):
         )
         context["all_trips_summary"] = {
             "trip_count": all_trips.count(),
-            "total_distance": total_all_trips["total_distance"] or Decimal("0"),
+            "total_distance": total_all_trips["total_distance"] or Decimal(0),
         }
 
         medical_summary = medical_trips.aggregate(total_distance=Sum("distance"))
         context["medical_summary"] = {
             "trip_count": medical_trips.count(),
-            "total_distance": medical_summary["total_distance"] or Decimal("0"),
+            "total_distance": medical_summary["total_distance"] or Decimal(0),
         }
 
         # Monthly breakdown
@@ -292,7 +292,7 @@ class CRAReportView(LoginRequiredMixin, TemplateView):
         for month in range(1, 13):
             month_trips = medical_trips.filter(date__month=month)
             if month_trips.exists():
-                month_total = month_trips.aggregate(total=Sum("distance"))["total"] or Decimal("0")
+                month_total = month_trips.aggregate(total=Sum("distance"))["total"] or Decimal(0)
                 monthly_data.append(
                     {
                         "month": month,
@@ -336,8 +336,8 @@ class CRAReportView(LoginRequiredMixin, TemplateView):
             # Get car's trips for the year
             car_trips = all_trips.filter(car=car)
             car_medical_trips = medical_trips.filter(car=car)
-            car_logged_km = car_trips.aggregate(total=Sum("distance"))["total"] or Decimal("0")
-            car_medical_km = car_medical_trips.aggregate(total=Sum("distance"))["total"] or Decimal("0")
+            car_logged_km = car_trips.aggregate(total=Sum("distance"))["total"] or Decimal(0)
+            car_medical_km = car_medical_trips.aggregate(total=Sum("distance"))["total"] or Decimal(0)
 
             # Calculate business use percentage
             business_percentage = None

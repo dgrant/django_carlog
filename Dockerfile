@@ -1,7 +1,7 @@
 # ==============================================================================
 # Stage 1: Builder - Install dependencies
 # ==============================================================================
-FROM python:3.12-slim AS builder
+FROM python:3.14-slim AS builder
 
 # Install build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -22,7 +22,7 @@ RUN uv sync --no-dev --no-cache
 # ==============================================================================
 # Stage 2: Production image
 # ==============================================================================
-FROM python:3.12-slim AS production
+FROM python:3.14-slim AS production
 
 # Python environment settings
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -36,7 +36,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && useradd --create-home --shell /bin/bash appuser
 
 # Copy installed Python packages from builder's venv
-COPY --from=builder /app/.venv/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+COPY --from=builder /app/.venv/lib/python3.14/site-packages /usr/local/lib/python3.14/site-packages
 
 WORKDIR /app
 

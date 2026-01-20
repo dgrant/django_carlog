@@ -3,6 +3,7 @@
 from decimal import Decimal
 
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 import pytest
 from rest_framework import status
@@ -61,8 +62,6 @@ class TestTripAPI:
     @pytest.fixture
     def sample_trip(self, sample_car):
         """Create a sample trip for testing."""
-        from django.utils import timezone
-
         return Trip.objects.create(
             date=timezone.now().date(),
             destination="Test Destination",
@@ -100,8 +99,6 @@ class TestOdometerAPI:
     @pytest.fixture
     def sample_odometer(self, sample_car):
         """Create a sample odometer reading for testing."""
-        from django.utils import timezone
-
         return Odometer.objects.create(
             date=timezone.now().date(),
             car=sample_car,
