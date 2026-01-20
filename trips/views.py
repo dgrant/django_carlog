@@ -16,7 +16,7 @@ from django.views.generic import (
 from django_filters import rest_framework as filters
 from rest_framework import viewsets
 
-from trips.forms import TripForm
+from trips.forms import CarForm, TripForm
 from trips.models import Car, Odometer, Trip
 from trips.serializers import (
     CarSerializer,
@@ -211,6 +211,66 @@ class TripDeleteView(DeleteView):
 
     def form_valid(self, form):
         messages.success(self.request, "Trip deleted successfully!")
+        return super().form_valid(form)
+
+
+class CarListView(ListView):
+    """List all cars with trip statistics."""
+
+    model = Car
+    template_name = "trips/car_list.html"
+    context_object_name = "cars"
+
+    def get_queryset(self):
+        from django.db.models import Count, Sum
+
+        return Car.objects.annotate(
+            trip_count=Count("trip"),
+            total_distance=Sum("trip__distance"),
+        )
+
+
+class CarCreateView(CreateView):
+    """Create a new car."""
+
+    model = Car
+    form_class = CarForm
+    template_name = "trips/car_form.html"
+    success_url = reverse_lazy("trips:car_list")
+
+    def form_valid(self, form):
+        messages.success(self.request, "Car added successfully!")
+        return super().form_valid(form)
+
+
+class CarUpdateView(UpdateView):
+    """Edit an existing car."""
+
+    model = Car
+    form_class = CarForm
+    template_name = "trips/car_form.html"
+    success_url = reverse_lazy("trips:car_list")
+
+    def form_valid(self, form):
+        messages.success(self.request, "Car updated successfully!")
+        return super().form_valid(form)
+
+
+class CarDeleteView(DeleteView):
+    """Delete a car."""
+
+    model = Car
+    template_name = "trips/car_confirm_delete.html"
+    success_url = reverse_lazy("trips:car_list")
+    context_object_name = "car"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["trip_count"] = Trip.objects.filter(car=self.object).count()
+        return context
+
+    def form_valid(self, form):
+        messages.success(self.request, "Car deleted successfully!")
         return super().form_valid(form)
 
 

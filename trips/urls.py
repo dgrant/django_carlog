@@ -3,6 +3,10 @@ from django.urls import include, path
 from rest_framework import routers
 
 from trips.views import (
+    CarCreateView,
+    CarDeleteView,
+    CarListView,
+    CarUpdateView,
     CarViewSet,
     CRAReportView,
     DashboardView,
@@ -33,6 +37,10 @@ urlpatterns = [
     path("trips/add/quick/", TripQuickAddView.as_view(), name="trip_add_quick"),
     path("trips/<int:pk>/edit/", TripUpdateView.as_view(), name="trip_edit"),
     path("trips/<int:pk>/delete/", TripDeleteView.as_view(), name="trip_delete"),
+    path("cars/", CarListView.as_view(), name="car_list"),
+    path("cars/add/", CarCreateView.as_view(), name="car_add"),
+    path("cars/<int:pk>/edit/", CarUpdateView.as_view(), name="car_edit"),
+    path("cars/<int:pk>/delete/", CarDeleteView.as_view(), name="car_delete"),
     path("reports/cra/", CRAReportView.as_view(), name="cra_report"),
     # API views
     path("api/", include(router.urls)),
