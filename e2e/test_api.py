@@ -27,15 +27,30 @@ def test_user(db):
 
 
 @pytest.fixture
-def authenticated_page(page: Page, live_server, test_user):
-    """Create an authenticated page by logging in."""
-    # Go to login page and authenticate (allauth uses email)
-    page.goto(f"{live_server.url}/accounts/login/")
-    page.fill("input[name='login']", "e2e@test.com")
-    page.fill("input[name='password']", "e2epass123")
-    page.click("button[type='submit']")
-    # Wait for redirect after login
-    page.wait_for_url(f"{live_server.url}/**")
+def authenticated_page(page: Page, live_server, test_user, client):
+    """Create an authenticated page by logging in via Django session."""
+    # Use Django's force_login to authenticate without UI
+    # This works with SOCIALACCOUNT_ONLY since we bypass the login form
+    client.force_login(test_user)
+
+    # Get the session cookie from Django test client
+    session_cookie = client.cookies["sessionid"]
+
+    # Navigate to the site first to set the domain
+    page.goto(f"{live_server.url}/")
+
+    # Set the session cookie in the browser
+    page.context.add_cookies(
+        [
+            {
+                "name": "sessionid",
+                "value": session_cookie.value,
+                "domain": "localhost",
+                "path": "/",
+            }
+        ]
+    )
+
     return page
 
 

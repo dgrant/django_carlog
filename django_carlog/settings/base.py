@@ -149,14 +149,22 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 # Allauth settings
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_AUTHENTICATION_METHOD = "email"
-ACCOUNT_EMAIL_VERIFICATION = "optional"
-LOGIN_REDIRECT_URL = "/trips/api/"
+ACCOUNT_EMAIL_VERIFICATION = "none"
+LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
-# Google OAuth settings (configure via environment variables)
+# Social account only (no email/password login)
+SOCIALACCOUNT_ONLY = True
+SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
+SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
+SOCIALACCOUNT_EMAIL_REQUIRED = True
+SOCIALACCOUNT_AUTO_SIGNUP = True
+
+# Required for Google One Tap popup
+SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin-allow-popups"
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+
+# Google OAuth settings
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "SCOPE": [

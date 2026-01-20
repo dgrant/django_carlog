@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Out - CarLog{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow">
+            <div class="card-body p-4 text-center">
+                <h2 class="card-title mb-4">
+                    <i class="bi bi-box-arrow-right text-secondary"></i> Sign Out
+                </h2>
+
+                <p class="mb-4">Are you sure you want to sign out?</p>
+
+                <form method="post" action="{% url 'account_logout' %}">
+                    {% csrf_token %}
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-secondary">
+                            <i class="bi bi-box-arrow-right"></i> Sign Out
+                        </button>
+                        <a href="{% url 'trips:dashboard' %}" class="btn btn-outline-primary">
+                            <i class="bi bi-arrow-left"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
