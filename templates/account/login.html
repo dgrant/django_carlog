@@ -3,92 +3,50 @@
 
 {% block title %}Sign In - CarLog{% endblock %}
 
+{% block extra_css %}
+<script src="https://accounts.google.com/gsi/client" async></script>
+{% endblock %}
+
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-6 col-lg-5">
+    <div class="col-md-6 col-lg-4">
         <div class="card shadow">
             <div class="card-body p-4">
                 <h2 class="card-title text-center mb-4">
                     <i class="bi bi-car-front-fill text-primary"></i> Sign In
                 </h2>
 
-                <!-- Social Login -->
-                <div class="mb-4">
+                <div class="text-center mb-4">
                     {% get_providers as socialaccount_providers %}
-                    {% if socialaccount_providers %}
-                        {% include "socialaccount/snippets/provider_list.html" with process="login" %}
-                    {% endif %}
-                </div>
-
-                <div class="text-center text-muted mb-3">
-                    <span class="bg-white px-2">or sign in with email</span>
-                </div>
-                <hr class="mt-0">
-
-                <!-- Email/Password Login Form -->
-                <form method="post" action="{% url 'account_login' %}">
-                    {% csrf_token %}
-
-                    {% if form.non_field_errors %}
-                    <div class="alert alert-danger">
-                        {% for error in form.non_field_errors %}
-                            {{ error }}
-                        {% endfor %}
-                    </div>
-                    {% endif %}
-
-                    <div class="mb-3">
-                        <label for="id_login" class="form-label">Email</label>
-                        <input type="email"
-                               class="form-control {% if form.login.errors %}is-invalid{% endif %}"
-                               id="id_login"
-                               name="login"
-                               placeholder="you@example.com"
-                               value="{{ form.login.value|default:'' }}"
-                               autofocus>
-                        {% if form.login.errors %}
-                        <div class="invalid-feedback">
-                            {% for error in form.login.errors %}{{ error }}{% endfor %}
+                    {% for provider in socialaccount_providers %}
+                    {% if provider.id == "google" %}
+                        <div id="g_id_onload"
+                            data-client_id="{{ provider.app.client_id }}"
+                            data-context="signin"
+                            data-ux_mode="popup"
+                            data-login_uri="{{ request.scheme }}://{{ request.site.domain }}{% url 'google_login_by_token' %}"
+                            data-itp_support="true">
                         </div>
-                        {% endif %}
-                    </div>
 
-                    <div class="mb-3">
-                        <label for="id_password" class="form-label">Password</label>
-                        <input type="password"
-                               class="form-control {% if form.password.errors %}is-invalid{% endif %}"
-                               id="id_password"
-                               name="password"
-                               placeholder="Your password">
-                        {% if form.password.errors %}
-                        <div class="invalid-feedback">
-                            {% for error in form.password.errors %}{{ error }}{% endfor %}
+                        <div class="g_id_signin"
+                            data-type="standard"
+                            data-shape="rectangular"
+                            data-theme="outline"
+                            data-text="signin_with"
+                            data-size="large"
+                            data-logo_alignment="left">
                         </div>
-                        {% endif %}
-                    </div>
-
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="id_remember" name="remember">
-                        <label class="form-check-label" for="id_remember">Remember me</label>
-                    </div>
-
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-box-arrow-in-right"></i> Sign In
-                        </button>
-                    </div>
-                </form>
-
-                <hr>
-
-                <div class="text-center">
-                    <p class="mb-2">
-                        <a href="{% url 'account_reset_password' %}">Forgot your password?</a>
-                    </p>
-                    <p class="mb-0">
-                        Don't have an account? <a href="{% url 'account_signup' %}">Sign up</a>
-                    </p>
+                    {% endif %}
+                    {% endfor %}
                 </div>
+
+                {% if messages %}
+                <div class="messages mt-3">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
