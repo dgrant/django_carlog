@@ -19,3 +19,18 @@ repos:
       - id: ruff
         args: [--fix]
       - id: ruff-format
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.14.1
+    hooks:
+      - id: mypy
+        additional_dependencies:
+          - django==5.1.5
+          - django-stubs==5.1.1
+          - djangorestframework==3.15.2
+          - djangorestframework-stubs==3.15.1
+          - django-filter==24.3
+          - django-allauth[socialaccount]==65.3.1
+          - django-model-utils==5.0.0
+        args: [--config-file=pyproject.toml]
+        exclude: ^(migrations/|tests/|e2e/)
