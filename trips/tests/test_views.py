@@ -55,18 +55,18 @@ def sample_odometer(db, sample_car):
 
 
 @pytest.fixture
-def user(db):
-    """Create a test user."""
-    return User.objects.create_user(username="testuser", password="testpass123")
+def anonymous_client():
+    """Create an unauthenticated test client."""
+    return Client()
 
 
 @pytest.mark.django_db
 class TestHomeView:
     """Tests for the Home view (root page)."""
 
-    def test_home_redirects_unauthenticated_to_login(self, client):
+    def test_home_redirects_unauthenticated_to_login(self, anonymous_client):
         """Test that unauthenticated users are redirected to login."""
-        response = client.get(reverse("home"))
+        response = anonymous_client.get(reverse("home"))
         assert response.status_code == 302
         assert "accounts/login" in response.url
 
@@ -285,3 +285,111 @@ class TestCRAReportView:
         """Test CRA report with no trips in year."""
         response = client.get(reverse("trips:cra_report"), {"year": "2020"})
         assert response.status_code == 200
+
+
+@pytest.mark.django_db
+class TestCarListView:
+    """Tests for the Car List view."""
+
+    def test_car_list_renders(self, client):
+        """Test that car list renders successfully."""
+        response = client.get(reverse("trips:car_list"))
+        assert response.status_code == 200
+
+    def test_car_list_shows_cars(self, client, sample_car):
+        """Test that car list shows cars."""
+        response = client.get(reverse("trips:car_list"))
+        assert sample_car.name in str(response.content)
+
+    def test_car_list_shows_trip_count(self, client, sample_trip):
+        """Test that car list shows trip count per car."""
+        response = client.get(reverse("trips:car_list"))
+        cars = response.context["cars"]
+        car = cars.get(pk=sample_trip.car.pk)
+        assert car.trip_count == 1
+
+    def test_car_list_shows_total_distance(self, client, sample_trip):
+        """Test that car list shows total distance per car."""
+        response = client.get(reverse("trips:car_list"))
+        cars = response.context["cars"]
+        car = cars.get(pk=sample_trip.car.pk)
+        assert car.total_distance == sample_trip.distance
+
+
+@pytest.mark.django_db
+class TestCarCreateView:
+    """Tests for the Car Create view."""
+
+    def test_car_create_renders(self, client):
+        """Test that car create form renders."""
+        response = client.get(reverse("trips:car_add"))
+        assert response.status_code == 200
+
+    def test_car_create_post(self, client):
+        """Test creating a car via POST."""
+        response = client.post(
+            reverse("trips:car_add"),
+            {"name": "New Test Car"},
+        )
+        assert response.status_code == 302  # Redirect on success
+        assert Car.objects.filter(name="New Test Car").exists()
+
+    def test_car_create_duplicate_name(self, client, sample_car):
+        """Test creating a car with duplicate name fails."""
+        response = client.post(
+            reverse("trips:car_add"),
+            {"name": sample_car.name},
+        )
+        assert response.status_code == 200  # Re-renders form with errors
+        assert Car.objects.filter(name=sample_car.name).count() == 1
+
+
+@pytest.mark.django_db
+class TestCarUpdateView:
+    """Tests for the Car Update view."""
+
+    def test_car_update_renders(self, client, sample_car):
+        """Test that car update form renders."""
+        response = client.get(reverse("trips:car_edit", args=[sample_car.pk]))
+        assert response.status_code == 200
+
+    def test_car_update_post(self, client, sample_car):
+        """Test updating a car via POST."""
+        response = client.post(
+            reverse("trips:car_edit", args=[sample_car.pk]),
+            {"name": "Updated Car Name"},
+        )
+        assert response.status_code == 302  # Redirect on success
+        sample_car.refresh_from_db()
+        assert sample_car.name == "Updated Car Name"
+
+
+@pytest.mark.django_db
+class TestCarDeleteView:
+    """Tests for the Car Delete view."""
+
+    def test_car_delete_renders(self, client, sample_car):
+        """Test that car delete confirmation renders."""
+        response = client.get(reverse("trips:car_delete", args=[sample_car.pk]))
+        assert response.status_code == 200
+
+    def test_car_delete_shows_trip_count(self, client, sample_trip):
+        """Test that car delete shows trip count warning."""
+        response = client.get(reverse("trips:car_delete", args=[sample_trip.car.pk]))
+        assert response.context["trip_count"] == 1
+
+    def test_car_delete_post(self, client, sample_car):
+        """Test deleting a car via POST."""
+        car_pk = sample_car.pk
+        response = client.post(reverse("trips:car_delete", args=[car_pk]))
+        assert response.status_code == 302  # Redirect on success
+        assert not Car.objects.filter(pk=car_pk).exists()
+
+    def test_car_delete_cascades_trips(self, client, sample_trip):
+        """Test that deleting a car also deletes associated trips."""
+        car_pk = sample_trip.car.pk
+        trip_pk = sample_trip.pk
+        response = client.post(reverse("trips:car_delete", args=[car_pk]))
+        assert response.status_code == 302
+        assert not Car.objects.filter(pk=car_pk).exists()
+        assert not Trip.objects.filter(pk=trip_pk).exists()

@@ -2,7 +2,18 @@
 
 from django import forms
 
-from trips.models import Trip
+from trips.models import Car, Trip
+
+
+class CarForm(forms.ModelForm):
+    """Form for creating and editing cars."""
+
+    class Meta:
+        model = Car
+        fields = ["name"]
+        widgets = {
+            "name": forms.TextInput(attrs={"class": "form-control", "maxlength": "20"}),
+        }
 
 
 class TripForm(forms.ModelForm):
