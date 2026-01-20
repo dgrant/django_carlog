@@ -3,7 +3,7 @@ from decimal import Decimal
 
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.db.models import Sum
+from django.db.models import Count, Sum
 from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView,
@@ -222,8 +222,6 @@ class CarListView(ListView):
     context_object_name = "cars"
 
     def get_queryset(self):
-        from django.db.models import Count, Sum
-
         return Car.objects.annotate(
             trip_count=Count("trip"),
             total_distance=Sum("trip__distance"),
