@@ -62,8 +62,11 @@ echo ">>> Checking application health..."
 MAX_ATTEMPTS=12
 SLEEP_BETWEEN=5
 
+# Get the first allowed host from env file for the Host header
+HEALTH_HOST=$(grep -E '^DJANGO_ALLOWED_HOSTS=' "${ENV_FILE}" | cut -d'=' -f2 | cut -d',' -f1)
+
 for attempt in $(seq 1 $MAX_ATTEMPTS); do
-    if curl -fsS "http://127.0.0.1:${PORT}/health/" > /dev/null 2>&1; then
+    if curl -fsS -H "Host: ${HEALTH_HOST}" "http://127.0.0.1:${PORT}/health/" > /dev/null 2>&1; then
         echo "=== Deployment successful! Application is healthy. ==="
         docker ps --filter "name=${CONTAINER_NAME}"
         echo ">>> Cleaning up old Docker images..."
