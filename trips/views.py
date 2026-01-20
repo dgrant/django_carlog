@@ -34,7 +34,7 @@ from trips.serializers import (
 
 
 class HomeView(View):
-    """Root page - redirects authenticated users to dashboard, shows landing for others."""
+    """Root page - redirects authenticated users to dashboard, unauthenticated users to login."""
 
     def get(self, request):
         if request.user.is_authenticated:
