@@ -3,6 +3,7 @@
 from datetime import date
 from decimal import Decimal
 
+from django.contrib.auth.models import User
 from django.test import Client
 from django.urls import reverse
 
@@ -12,9 +13,17 @@ from trips.models import Car, Odometer, Trip
 
 
 @pytest.fixture
-def client():
-    """Create a test client."""
-    return Client()
+def user(db):
+    """Create a test user."""
+    return User.objects.create_user(username="testuser", password="testpass123")
+
+
+@pytest.fixture
+def client(user):
+    """Create an authenticated test client."""
+    c = Client()
+    c.login(username="testuser", password="testpass123")
+    return c
 
 
 @pytest.fixture
