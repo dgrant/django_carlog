@@ -1,6 +1,6 @@
 from .base import *  # noqa
 
-SECRET_KEY = "!nx*3)g76&u6k1%1cy(vw#m*42oewdf_xils_^(ri3lk3@0e7f"  # noqa
+SECRET_KEY = "!nx*3)g76&u6k1%1cy(vw#m*42oewdf_xils_^(ri3lk3@0e7f"
 
 DEBUG = True
 

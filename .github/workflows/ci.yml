@@ -2,13 +2,13 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [main, master]
+    branches: ["master"]
     tags: ["v*"]
   pull_request:
-    branches: [main, master]
+    branches: ["master"]
 
 env:
-  PYTHON_VERSION: "3.12"
+  PYTHON_VERSION: "3.14"
   DJANGO_SETTINGS_MODULE: django_carlog.settings.test
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
@@ -64,11 +64,8 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-extras
 
-      - name: Run Ruff linter
-        run: uv run ruff check .
-
-      - name: Run Ruff formatter check
-        run: uv run ruff format --check .
+      - name: Run pre-commit hooks
+        run: uv run pre-commit run --all-files
 
       - name: Run mypy type checking
         run: uv run mypy trips/ django_carlog/
@@ -208,30 +205,37 @@ jobs:
     name: Deploy to Linode
     runs-on: ubuntu-latest
     needs: build-and-push
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Deploy to Linode server
+      - name: Copy deploy script to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.LINODE_HOST }}
+          username: ${{ secrets.LINODE_USER }}
+          key: ${{ secrets.LINODE_SSH_KEY }}
+          port: ${{ secrets.LINODE_SSH_PORT }}
+          source: docker/deploy.sh
+          target: /tmp/carlog-deploy
+          strip_components: 1
+
+      - name: Deploy to production
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.LINODE_HOST }}
-          username: ${{ secrets.LINODE_USERNAME }}
+          username: ${{ secrets.LINODE_USER }}
           key: ${{ secrets.LINODE_SSH_KEY }}
           port: ${{ secrets.LINODE_SSH_PORT }}
+          envs: GITHUB_SHA
           script: |
-            cd ${{ secrets.LINODE_APP_PATH }}
-            git pull origin main
+            set -e
 
-            # Use uv for dependency management
-            curl -LsSf https://astral.sh/uv/install.sh | sh
-            source $HOME/.local/bin/env
-            uv sync
+            export CONTAINER_NAME=carlog_prod
+            export PORT=8002
+            export ENV_FILE=/home/david/.env.carlog.prod
+            export STATIC_DIR=/home/david/carlog_prod/static
 
-            # Run migrations and collect static files
-            uv run python manage.py migrate --settings=django_carlog.settings.production
-            uv run python manage.py collectstatic --noinput --settings=django_carlog.settings.production
-
-            # Restart the application
-            sudo systemctl restart django_carlog
+            chmod +x /tmp/carlog-deploy/deploy.sh
+            /tmp/carlog-deploy/deploy.sh master-${GITHUB_SHA::7}
