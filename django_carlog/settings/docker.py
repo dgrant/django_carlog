@@ -57,7 +57,7 @@ LOGGING = {
 
 # Auth settings
 LOGIN_URL = "/admin/login/"
-LOGIN_REDIRECT_URL = "/trips/api/"
+LOGIN_REDIRECT_URL = "/"
 
 # Security headers (nginx handles SSL termination)
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
