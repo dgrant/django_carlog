@@ -79,7 +79,7 @@ class DashboardView(TemplateView):
 
         context["current_year"] = current_year
         context["trips_this_year"] = year_trips.count()
-        context["total_distance_year"] = year_trips.aggregate(total=Sum("distance"))["total"] or Decimal("0")
+        context["total_distance_year"] = year_trips.aggregate(total=Sum("distance"))["total"] or Decimal(0)
         context["recent_trips"] = Trip.objects.all()[:10]
 
         return context
@@ -123,7 +123,7 @@ class TripListView(ListView):
         context["selected_reason"] = self.request.GET.get("reason", "")
 
         # Calculate total distance for filtered results
-        context["total_distance"] = self.get_queryset().aggregate(total=Sum("distance"))["total"] or Decimal("0")
+        context["total_distance"] = self.get_queryset().aggregate(total=Sum("distance"))["total"] or Decimal(0)
 
         return context
 
@@ -249,7 +249,7 @@ class CRAReportView(TemplateView):
         trips_summary = all_trips.aggregate(total_distance=Sum("distance"))
         context["trips_summary"] = {
             "trip_count": all_trips.count(),
-            "total_distance": trips_summary["total_distance"] or Decimal("0"),
+            "total_distance": trips_summary["total_distance"] or Decimal(0),
         }
 
         # Monthly breakdown
@@ -271,7 +271,7 @@ class CRAReportView(TemplateView):
         for month in range(1, 13):
             month_trips = all_trips.filter(date__month=month)
             if month_trips.exists():
-                month_total = month_trips.aggregate(total=Sum("distance"))["total"] or Decimal("0")
+                month_total = month_trips.aggregate(total=Sum("distance"))["total"] or Decimal(0)
                 monthly_data.append(
                     {
                         "month": month,
@@ -314,13 +314,12 @@ class CRAReportView(TemplateView):
 
             # Get car's trips for the year
             car_trips = all_trips.filter(car=car)
-            car_logged_km = car_trips.aggregate(total=Sum("distance"))["total"] or Decimal("0")
-            car_business_km = car_logged_km
+            car_logged_km = car_trips.aggregate(total=Sum("distance"))["total"] or Decimal(0)
 
             # Calculate business use percentage
             business_percentage = None
             if total_km_driven and total_km_driven > 0:
-                business_percentage = (float(car_business_km) / total_km_driven) * 100
+                business_percentage = (float(car_logged_km) / total_km_driven) * 100
 
             car_odometer_data.append(
                 {
@@ -329,7 +328,7 @@ class CRAReportView(TemplateView):
                     "end_reading": end_reading,
                     "total_km_driven": total_km_driven,
                     "logged_km": car_logged_km,
-                    "business_km": car_business_km,
+                    "business_km": car_logged_km,
                     "business_percentage": business_percentage,
                 }
             )
