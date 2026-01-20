@@ -2,6 +2,8 @@
 
 from decimal import Decimal
 
+from django.contrib.auth.models import User
+
 import pytest
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -10,9 +12,17 @@ from trips.models import Car, Odometer, Trip
 
 
 @pytest.fixture
-def api_client():
-    """Create an API client for testing."""
-    return APIClient()
+def user(db):
+    """Create a test user."""
+    return User.objects.create_user(username="testuser", password="testpass123")
+
+
+@pytest.fixture
+def api_client(user):
+    """Create an authenticated API client for testing."""
+    client = APIClient()
+    client.login(username="testuser", password="testpass123")
+    return client
 
 
 @pytest.fixture
