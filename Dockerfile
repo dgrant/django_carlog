@@ -1,41 +1,55 @@
-FROM python:3.12-slim
+# ==============================================================================
+# Stage 1: Builder - Install dependencies
+# ==============================================================================
+FROM python:3.14-slim AS builder
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
-# Set work directory
-WORKDIR /app
-
-# Install system dependencies for mysqlclient and uv
-RUN apt-get update && apt-get install -y \
-    default-libmysqlclient-dev \
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     pkg-config \
-    curl \
+    default-libmysqlclient-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Install uv
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
-# Copy dependency files
-COPY pyproject.toml uv.lock* ./
+WORKDIR /app
+COPY pyproject.toml uv.lock ./
 
-# Install Python dependencies with uv
-RUN uv sync --frozen --no-dev
+# Install production deps with uv (much faster than pip)
+RUN uv sync --no-dev --no-cache
 
-# Copy project
-COPY . .
+# ==============================================================================
+# Stage 2: Production image
+# ==============================================================================
+FROM python:3.14-slim AS production
 
-# Collect static files at build time (uses base settings with default SECRET_KEY)
-RUN uv run python manage.py collectstatic --noinput --settings=django_carlog.settings.base
+# Python environment settings
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
-# Expose port (Render uses $PORT env var)
+# Runtime dependencies only
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    default-mysql-client \
+    libmariadb3 \
+    && rm -rf /var/lib/apt/lists/* \
+    && useradd --create-home --shell /bin/bash appuser
+
+# Copy installed Python packages from builder's venv
+COPY --from=builder /app/.venv/lib/python3.14/site-packages /usr/local/lib/python3.14/site-packages
+
+WORKDIR /app
+
+# Copy application code
+COPY --chown=appuser:appuser . .
+
+RUN mkdir -p /app/static && chown appuser:appuser /app/static
+
+USER appuser
+
 EXPOSE 8000
 
-# Set default Django settings module
-ENV DJANGO_SETTINGS_MODULE=django_carlog.settings.production
-
-# Default command - run migrations then start gunicorn
-# Uses $PORT env var (Render sets this), defaults to 8000
-CMD ["sh", "-c", "uv run python manage.py migrate && uv run gunicorn --bind 0.0.0.0:${PORT:-8000} django_carlog.wsgi:application"]
+CMD ["python", "-m", "gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "--threads", "2", \
+     "--worker-class", "gthread", "--worker-tmp-dir", "/dev/shm", \
+     "--access-logfile", "-", "--error-logfile", "-", \
+     "django_carlog.wsgi:application"]

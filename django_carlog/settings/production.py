@@ -1,7 +1,7 @@
 """Production settings for Render deployment."""
 
+import logging
 import os
-import sys
 
 import dj_database_url
 
@@ -23,10 +23,12 @@ if RENDER_EXTERNAL_HOSTNAME:
 
 # Always allow Render domain patterns (wildcard and explicit)
 # This ensures the app works even if RENDER_EXTERNAL_HOSTNAME isn't set
-ALLOWED_HOSTS.extend([
-    ".onrender.com",  # Wildcard for all Render subdomains
-    "django-carlog.onrender.com",  # Explicit hostname
-])
+ALLOWED_HOSTS.extend(
+    [
+        ".onrender.com",  # Wildcard for all Render subdomains
+        "django-carlog.onrender.com",  # Explicit hostname
+    ]
+)
 
 # Remove duplicates while preserving order
 ALLOWED_HOSTS = list(dict.fromkeys(ALLOWED_HOSTS))
@@ -40,7 +42,7 @@ DATABASE_URL = os.environ.get("DATABASE_URL")
 if DATABASE_URL:
     # Render PostgreSQL (simplest for testing)
     DATABASES = {
-        "default": dj_database_url.config(
+        "default": dj_database_url.config(  # type: ignore[dict-item]
             default=DATABASE_URL,
             conn_max_age=600,
             conn_health_checks=True,
@@ -71,7 +73,8 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-# Debug logging - print to stderr so it appears in Render logs
-print(f"[DJANGO_CARLOG] DEBUG mode: {DEBUG}", file=sys.stderr)
-print(f"[DJANGO_CARLOG] ALLOWED_HOSTS: {ALLOWED_HOSTS}", file=sys.stderr)
-print(f"[DJANGO_CARLOG] DATABASE_URL set: {bool(DATABASE_URL)}", file=sys.stderr)
+# Debug logging - use logging to stderr so it appears in Render logs
+_logger = logging.getLogger(__name__)
+_logger.info("DEBUG mode: %s", DEBUG)
+_logger.info("ALLOWED_HOSTS: %s", ALLOWED_HOSTS)
+_logger.info("DATABASE_URL set: %s", bool(DATABASE_URL))
