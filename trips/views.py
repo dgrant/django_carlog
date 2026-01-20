@@ -2,8 +2,10 @@ from datetime import date
 from decimal import Decimal
 
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.db.models import Count, Sum
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView,
@@ -11,10 +13,12 @@ from django.views.generic import (
     ListView,
     TemplateView,
     UpdateView,
+    View,
 )
 
 from django_filters import rest_framework as filters
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
 
 from trips.forms import CarForm, TripForm
 from trips.models import Car, Odometer, Trip
@@ -27,6 +31,20 @@ from trips.serializers import (
 
 
 # =============================================================================
+# Home View (Root Page)
+# =============================================================================
+
+
+class HomeView(View):
+    """Root page - redirects authenticated users to dashboard, unauthenticated users to login."""
+
+    def get(self, request):
+        if request.user.is_authenticated:
+            return redirect("trips:dashboard")
+        return redirect("account_login")
+
+
+# =============================================================================
 # REST API ViewSets
 # =============================================================================
 
@@ -34,11 +52,13 @@ from trips.serializers import (
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class CarViewSet(viewsets.ModelViewSet):
     queryset = Car.objects.all()
     serializer_class = CarSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class TripFilter(filters.FilterSet):
@@ -53,11 +73,13 @@ class TripViewSet(viewsets.ModelViewSet):
     queryset = Trip.objects.all()
     serializer_class = TripSerializer
     filterset_class = TripFilter
+    permission_classes = [IsAuthenticated]
 
 
 class OdometerViewSet(viewsets.ModelViewSet):
     queryset = Odometer.objects.all()
     serializer_class = OdometerSerializer
+    permission_classes = [IsAuthenticated]
 
 
 # =============================================================================
@@ -65,7 +87,7 @@ class OdometerViewSet(viewsets.ModelViewSet):
 # =============================================================================
 
 
-class DashboardView(TemplateView):
+class DashboardView(LoginRequiredMixin, TemplateView):
     """Main dashboard with stats and quick actions."""
 
     template_name = "trips/dashboard.html"
@@ -88,7 +110,7 @@ class DashboardView(TemplateView):
         return context
 
 
-class TripListView(ListView):
+class TripListView(LoginRequiredMixin, ListView):
     """List all trips with filtering."""
 
     model = Trip
@@ -131,7 +153,7 @@ class TripListView(ListView):
         return context
 
 
-class TripCreateView(CreateView):
+class TripCreateView(LoginRequiredMixin, CreateView):
     """Create a new trip."""
 
     model = Trip
@@ -176,7 +198,7 @@ class TripQuickAddView(TripCreateView):
         return initial
 
 
-class TripUpdateView(UpdateView):
+class TripUpdateView(LoginRequiredMixin, UpdateView):
     """Edit an existing trip."""
 
     model = Trip
@@ -201,7 +223,7 @@ class TripUpdateView(UpdateView):
         return super().form_valid(form)
 
 
-class TripDeleteView(DeleteView):
+class TripDeleteView(LoginRequiredMixin, DeleteView):  # type: ignore[misc]
     """Delete a trip."""
 
     model = Trip
@@ -214,7 +236,7 @@ class TripDeleteView(DeleteView):
         return super().form_valid(form)
 
 
-class CarListView(ListView):
+class CarListView(LoginRequiredMixin, ListView):
     """List all cars with trip statistics."""
 
     model = Car
@@ -228,7 +250,7 @@ class CarListView(ListView):
         )
 
 
-class CarCreateView(CreateView):
+class CarCreateView(LoginRequiredMixin, CreateView):
     """Create a new car."""
 
     model = Car
@@ -241,7 +263,7 @@ class CarCreateView(CreateView):
         return super().form_valid(form)
 
 
-class CarUpdateView(UpdateView):
+class CarUpdateView(LoginRequiredMixin, UpdateView):
     """Edit an existing car."""
 
     model = Car
@@ -254,7 +276,7 @@ class CarUpdateView(UpdateView):
         return super().form_valid(form)
 
 
-class CarDeleteView(DeleteView):
+class CarDeleteView(LoginRequiredMixin, DeleteView):  # type: ignore[misc]
     """Delete a car."""
 
     model = Car
@@ -272,7 +294,7 @@ class CarDeleteView(DeleteView):
         return super().form_valid(form)
 
 
-class CRAReportView(TemplateView):
+class CRAReportView(LoginRequiredMixin, TemplateView):
     """CRA-compliant mileage report for tax purposes."""
 
     template_name = "trips/cra_report.html"
