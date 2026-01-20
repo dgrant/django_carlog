@@ -76,13 +76,10 @@ class DashboardView(TemplateView):
 
         # Get trips for current year
         year_trips = Trip.objects.filter(date__year=current_year)
-        medical_trips = year_trips.filter(reason__icontains="medical")
 
         context["current_year"] = current_year
         context["trips_this_year"] = year_trips.count()
         context["total_distance_year"] = year_trips.aggregate(total=Sum("distance"))["total"] or Decimal("0")
-        context["medical_trips_year"] = medical_trips.count()
-        context["medical_distance_year"] = medical_trips.aggregate(total=Sum("distance"))["total"] or Decimal("0")
         context["recent_trips"] = Trip.objects.all()[:10]
 
         return context
@@ -244,27 +241,15 @@ class CRAReportView(TemplateView):
             selected_year = years[0] if years else date.today().year
         context["selected_year"] = selected_year
 
-        # Get all trips for the year (for total km calculation)
-        all_trips = Trip.objects.filter(date__year=selected_year).select_related("car")
-
-        # Get medical/business trips
-        medical_trips = all_trips.filter(reason__icontains="medical").order_by("date")
-        context["medical_trips"] = medical_trips
+        # Get all trips for the year
+        all_trips = Trip.objects.filter(date__year=selected_year).select_related("car").order_by("date")
+        context["trips"] = all_trips
 
         # Summary statistics
-        total_all_trips = all_trips.aggregate(
-            trip_count=Sum("pk"),  # Will be replaced with Count
-            total_distance=Sum("distance"),
-        )
-        context["all_trips_summary"] = {
+        trips_summary = all_trips.aggregate(total_distance=Sum("distance"))
+        context["trips_summary"] = {
             "trip_count": all_trips.count(),
-            "total_distance": total_all_trips["total_distance"] or Decimal("0"),
-        }
-
-        medical_summary = medical_trips.aggregate(total_distance=Sum("distance"))
-        context["medical_summary"] = {
-            "trip_count": medical_trips.count(),
-            "total_distance": medical_summary["total_distance"] or Decimal("0"),
+            "total_distance": trips_summary["total_distance"] or Decimal("0"),
         }
 
         # Monthly breakdown
@@ -284,7 +269,7 @@ class CRAReportView(TemplateView):
             "December",
         ]
         for month in range(1, 13):
-            month_trips = medical_trips.filter(date__month=month)
+            month_trips = all_trips.filter(date__month=month)
             if month_trips.exists():
                 month_total = month_trips.aggregate(total=Sum("distance"))["total"] or Decimal("0")
                 monthly_data.append(
@@ -300,8 +285,8 @@ class CRAReportView(TemplateView):
         # CRA rate and estimated deduction
         cra_rate = self.CRA_RATES.get(selected_year, Decimal("0.70"))
         context["cra_rate"] = cra_rate
-        medical_distance = context["medical_summary"]["total_distance"]
-        context["estimated_deduction"] = medical_distance * cra_rate
+        business_distance = context["trips_summary"]["total_distance"]
+        context["estimated_deduction"] = business_distance * cra_rate
 
         # Odometer readings for fiscal year (CRA requirement)
         cars = Car.objects.all()
@@ -329,14 +314,13 @@ class CRAReportView(TemplateView):
 
             # Get car's trips for the year
             car_trips = all_trips.filter(car=car)
-            car_medical_trips = medical_trips.filter(car=car)
             car_logged_km = car_trips.aggregate(total=Sum("distance"))["total"] or Decimal("0")
-            car_medical_km = car_medical_trips.aggregate(total=Sum("distance"))["total"] or Decimal("0")
+            car_business_km = car_logged_km
 
             # Calculate business use percentage
             business_percentage = None
             if total_km_driven and total_km_driven > 0:
-                business_percentage = (float(car_medical_km) / total_km_driven) * 100
+                business_percentage = (float(car_business_km) / total_km_driven) * 100
 
             car_odometer_data.append(
                 {
@@ -345,7 +329,7 @@ class CRAReportView(TemplateView):
                     "end_reading": end_reading,
                     "total_km_driven": total_km_driven,
                     "logged_km": car_logged_km,
-                    "medical_km": car_medical_km,
+                    "business_km": car_business_km,
                     "business_percentage": business_percentage,
                 }
             )
