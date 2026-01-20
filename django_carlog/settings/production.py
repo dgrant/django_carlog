@@ -23,10 +23,12 @@ if RENDER_EXTERNAL_HOSTNAME:
 
 # Always allow Render domain patterns (wildcard and explicit)
 # This ensures the app works even if RENDER_EXTERNAL_HOSTNAME isn't set
-ALLOWED_HOSTS.extend([
-    ".onrender.com",  # Wildcard for all Render subdomains
-    "django-carlog.onrender.com",  # Explicit hostname
-])
+ALLOWED_HOSTS.extend(
+    [
+        ".onrender.com",  # Wildcard for all Render subdomains
+        "django-carlog.onrender.com",  # Explicit hostname
+    ]
+)
 
 # Remove duplicates while preserving order
 ALLOWED_HOSTS = list(dict.fromkeys(ALLOWED_HOSTS))
@@ -72,6 +74,6 @@ MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Debug logging - print to stderr so it appears in Render logs
-print(f"[DJANGO_CARLOG] DEBUG mode: {DEBUG}", file=sys.stderr)
-print(f"[DJANGO_CARLOG] ALLOWED_HOSTS: {ALLOWED_HOSTS}", file=sys.stderr)
-print(f"[DJANGO_CARLOG] DATABASE_URL set: {bool(DATABASE_URL)}", file=sys.stderr)
+print(f"[DJANGO_CARLOG] DEBUG mode: {DEBUG}", file=sys.stderr)  # noqa: T201
+print(f"[DJANGO_CARLOG] ALLOWED_HOSTS: {ALLOWED_HOSTS}", file=sys.stderr)  # noqa: T201
+print(f"[DJANGO_CARLOG] DATABASE_URL set: {bool(DATABASE_URL)}", file=sys.stderr)  # noqa: T201

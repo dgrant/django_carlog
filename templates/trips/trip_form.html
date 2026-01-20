@@ -18,10 +18,10 @@
             <div class="card-body">
                 <form method="post">
                     {% csrf_token %}
-                    
+
                     <div class="mb-3">
                         <label for="id_date" class="form-label">Date</label>
-                        <input type="date" name="date" id="id_date" class="form-control" 
+                        <input type="date" name="date" id="id_date" class="form-control"
                                value="{{ form.date.value|date:'Y-m-d'|default:today }}" required>
                         {% if form.date.errors %}
                         <div class="invalid-feedback d-block">{{ form.date.errors }}</div>
@@ -30,8 +30,8 @@
 
                     <div class="mb-3">
                         <label for="id_destination" class="form-label">Destination</label>
-                        <input type="text" name="destination" id="id_destination" class="form-control" 
-                               value="{{ form.destination.value|default:prefill_destination }}" 
+                        <input type="text" name="destination" id="id_destination" class="form-control"
+                               value="{{ form.destination.value|default:prefill_destination }}"
                                maxlength="20" required list="destinations">
                         <datalist id="destinations">
                             {% for dest in common_destinations %}
@@ -45,8 +45,8 @@
 
                     <div class="mb-3">
                         <label for="id_reason" class="form-label">Reason</label>
-                        <input type="text" name="reason" id="id_reason" class="form-control" 
-                               value="{{ form.reason.value|default:prefill_reason }}" 
+                        <input type="text" name="reason" id="id_reason" class="form-control"
+                               value="{{ form.reason.value|default:prefill_reason }}"
                                maxlength="20" required list="reasons">
                         <datalist id="reasons">
                             {% for reason in common_reasons %}
@@ -60,8 +60,8 @@
 
                     <div class="mb-3">
                         <label for="id_distance" class="form-label">Distance (km)</label>
-                        <input type="number" name="distance" id="id_distance" class="form-control" 
-                               value="{{ form.distance.value|default:'' }}" 
+                        <input type="number" name="distance" id="id_distance" class="form-control"
+                               value="{{ form.distance.value|default:'' }}"
                                step="0.1" min="0" max="9999" required>
                         {% if form.distance.errors %}
                         <div class="invalid-feedback d-block">{{ form.distance.errors }}</div>
@@ -85,7 +85,7 @@
 
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-check-circle"></i> 
+                            <i class="bi bi-check-circle"></i>
                             {% if form.instance.pk %}Update{% else %}Save{% endif %} Trip
                         </button>
                         <a href="{% url 'trips:trip_list' %}" class="btn btn-outline-secondary">
