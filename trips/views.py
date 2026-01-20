@@ -2,6 +2,7 @@ from datetime import date
 from decimal import Decimal
 
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.urls import reverse_lazy
@@ -15,6 +16,7 @@ from django.views.generic import (
 
 from django_filters import rest_framework as filters
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
 
 from trips.forms import TripForm
 from trips.models import Car, Odometer, Trip
@@ -34,11 +36,13 @@ from trips.serializers import (
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class CarViewSet(viewsets.ModelViewSet):
     queryset = Car.objects.all()
     serializer_class = CarSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class TripFilter(filters.FilterSet):
@@ -53,11 +57,13 @@ class TripViewSet(viewsets.ModelViewSet):
     queryset = Trip.objects.all()
     serializer_class = TripSerializer
     filterset_class = TripFilter
+    permission_classes = [IsAuthenticated]
 
 
 class OdometerViewSet(viewsets.ModelViewSet):
     queryset = Odometer.objects.all()
     serializer_class = OdometerSerializer
+    permission_classes = [IsAuthenticated]
 
 
 # =============================================================================
@@ -65,7 +71,7 @@ class OdometerViewSet(viewsets.ModelViewSet):
 # =============================================================================
 
 
-class DashboardView(TemplateView):
+class DashboardView(LoginRequiredMixin, TemplateView):
     """Main dashboard with stats and quick actions."""
 
     template_name = "trips/dashboard.html"
@@ -88,7 +94,7 @@ class DashboardView(TemplateView):
         return context
 
 
-class TripListView(ListView):
+class TripListView(LoginRequiredMixin, ListView):
     """List all trips with filtering."""
 
     model = Trip
@@ -131,7 +137,7 @@ class TripListView(ListView):
         return context
 
 
-class TripCreateView(CreateView):
+class TripCreateView(LoginRequiredMixin, CreateView):
     """Create a new trip."""
 
     model = Trip
@@ -176,7 +182,7 @@ class TripQuickAddView(TripCreateView):
         return initial
 
 
-class TripUpdateView(UpdateView):
+class TripUpdateView(LoginRequiredMixin, UpdateView):
     """Edit an existing trip."""
 
     model = Trip
@@ -201,7 +207,7 @@ class TripUpdateView(UpdateView):
         return super().form_valid(form)
 
 
-class TripDeleteView(DeleteView):
+class TripDeleteView(LoginRequiredMixin, DeleteView):  # type: ignore[misc]
     """Delete a trip."""
 
     model = Trip
@@ -214,7 +220,7 @@ class TripDeleteView(DeleteView):
         return super().form_valid(form)
 
 
-class CRAReportView(TemplateView):
+class CRAReportView(LoginRequiredMixin, TemplateView):
     """CRA-compliant mileage report for tax purposes."""
 
     template_name = "trips/cra_report.html"
