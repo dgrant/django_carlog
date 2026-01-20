@@ -54,19 +54,14 @@ def sample_odometer(db, sample_car):
     )
 
 
-@pytest.fixture
-def user(db):
-    """Create a test user."""
-    return User.objects.create_user(username="testuser", password="testpass123")
-
-
 @pytest.mark.django_db
 class TestHomeView:
     """Tests for the Home view (root page)."""
 
-    def test_home_redirects_unauthenticated_to_login(self, client):
+    def test_home_redirects_unauthenticated_to_login(self, db):
         """Test that unauthenticated users are redirected to login."""
-        response = client.get(reverse("home"))
+        unauthenticated_client = Client()
+        response = unauthenticated_client.get(reverse("home"))
         assert response.status_code == 302
         assert "accounts/login" in response.url
 
